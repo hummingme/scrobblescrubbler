@@ -1,0 +1,41 @@
+{
+    "manifest_version": 3,
+    "name": "ScrobbleScrubbler",
+    "version": "1.0",
+    "description": "Instant insights and bulk editing for your last.fm scrobbles, and more.",
+    "author": "Lutz Brückner",
+    "homepage_url": "https://github.com/hummingme/scrobblescrubbler#readme",
+    "minimum_chrome_version": "120",
+    "permissions": [
+        "storage",
+        "scripting",
+        "webRequest"
+    ],
+    "host_permissions": [
+        "https://www.last.fm/*"
+    ],
+    "icons": {
+        "48": "static/icons/scrubbler-disc_48.png",
+        "128": "static/icons/scrubbler-disc_128.png"
+    },
+    "background": {
+        "service_worker": "background.js",
+        "type": "module"
+    },
+    "content_scripts": [{
+        "matches": ["https://www.last.fm/*"],
+        "js": ["scrobble-scrubbler.js"]
+    }],
+    "action": {
+        "default_icon": {
+            "16": "static/icons/scrubbler-disc_16.png",
+            "32": "static/icons/scrubbler-disc_32.png"
+        },  
+        "default_title": "ScrobbleScrubbler",
+        "default_popup": "static/popup.html"
+    },
+    "web_accessible_resources": [{
+        "resources": ["static/scrobble-scrubbler.css"],
+        "matches": ["https://www.last.fm/*"]
+    }]
+}

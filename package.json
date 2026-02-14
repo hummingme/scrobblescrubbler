@@ -1,0 +1,44 @@
+{
+    "name": "ScrobbleScrubbler",
+    "version": "1.0",
+    "description": "Instant insights and bulk editing for your last.fm scrobbles, and more.",
+    "author": "Lutz Brückner",
+    "license": "GPL-3.0-or-later",
+    "type": "module",
+    "repository": {
+        "type": "git",
+        "url": "https://git.lamuella.de/lutz/scrobble-scrubbler.git"
+    },
+    "keywords": [
+        "last.fm",
+        "extension",
+        "addon"
+    ],
+    "scripts": {
+        "dev": "bun scripts/dev.ts",
+        "build": "bun scripts/build",
+        "release": "bun scripts/release.ts",
+        "lint": "eslint 'src/**/*.ts'",
+        "check": "tsc --noEmit"
+    },
+    "dependencies": {
+        "@open-wc/lit-helpers": "^0.7.0",
+        "blueimp-md5": "^2.19.0",
+        "dexie": "^4.3.0",
+        "lit": "^3.3.2",
+        "lit-html": "^3.3.2"
+    },
+    "devDependencies": {
+        "@eslint/js": "^9.39.2",
+        "@types/blueimp-md5": "^2.18.2",
+        "@types/bun": "^1.3.8",
+        "@types/chrome": "^0.1.36",
+        "@types/firefox-webext-browser": "^143.0.0",
+        "eslint": "^9.39.2",
+        "eslint-config-prettier": "^10.1.8",
+        "globals": "^17.3.0",
+        "prettier": "3.8.1",
+        "typescript-eslint": "^8.54.0",
+        "web-ext": "^9.2.0"
+    }
+}

@@ -23,10 +23,10 @@ Third, the extension is developed exclusively using my own Last.fm library as a 
 On the good news, I've been using ScrobbbleScrubbler for more than half a year now and it has absolutely changed my life for the better ☺️.
 
 ## 🛸 Installation 
-Please download and install the extension from the [Chrome Web Store](https://chromewebstore.google.com/detail/kahuna/scrobblescrubbler) for Chrome and Chromium based browsers such as Edge, Brave, and Opera, and from the [Firefox Addons Page](https://addons.mozilla.org/en-US/firefox/addon/scrobblescrubbler) for Firefox.
+Please download and install the extension from the [Chrome Web Store](https://chromewebstore.google.com/detail/scrobblescrubbler/) for Chrome and Chromium based browsers such as Edge, Brave, and Opera, and from the [Firefox Addons Page](https://addons.mozilla.org/en-US/firefox/addon/scrobblescrubbler) for Firefox.
 
 <div align="center">
-      <a href="https://chromewebstore.google.com/detail/scrobblescrubbler/ilafpdbgcaodnkdklgemggjamhpdjile">
+      <a href="https://chromewebstore.google.com/detail/scrobblescrubbler/">
         <img src="assets/chrome-logo-64.png" width="64" alt="install ScrobbleScrubbler for Chrome" /></a>
       <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" width="40">
       <a href="https://addons.mozilla.org/en-US/firefox/addon/scrobblescrubbler/">
@@ -37,9 +37,11 @@ Please download and install the extension from the [Chrome Web Store](https://ch
 
 ### The Start
 Before ScrobbleScrubbler can do anything, the extension needs to download the data from the Last.fm website. Since this is a fairly large process, it only happens after you initiate it: Look for the extensions icon, either directly in the browser bar or hidden behind a puzzle piece icon, and click it. A dialog box will open with some information about the upcoming download and with a large red button. After clicking the button, all you need is a little patience. For my > 700k scrobbles plus plenty of automatic edits, it takes almost a whole day to finish. 
+
 <p align="center">
-    <img src="assets/start-downloading.png" alt="button to start the download" />
+    <img src="assets/start-downloading.png" alt="red button to start the download" />
 </p>
+
 You can suspend the process at any time by closing the browser or turning off the device, it will resume once Last.fm is opened in your browser again.
 
 It's perfectly fine to continue scrobbling, to use Last.fm, or to edit or delete scrobbles during the download process. My best advice is, to start the process in one browser tab first and then use the website in a separate tab opened afterward.
@@ -50,9 +52,11 @@ You can monitor the download progress by hovering over the extension icon, or in
 
 ### The Disk Icons
 The discs appear in lists with scrobbles and in your library lists for tracks, albums, and artists. Hovering the icons with the mouse reveals some information about the associated scrobbles. Clicking a disk opens the [Info Popup](#the-info-popup).
+
 <p align="center">
     <img src="assets/scrobblelist-icons.png" alt="scrobblelist with grey, blue and red icons" />
 </p>
+
 A grey/black icon indicates that all scrobbles of a track come from one album. A turquoise/blue icon indicates scrobbles of a track from multiple albums. If a track has an orange/red icon, there are scrobbles where the album data is missing.
 
 If the discs are located next to an album or artist, the colors refer accordingly to the scobbles for the tracks of the album or artist.
@@ -63,18 +67,22 @@ Rarely, a pink/violet disc with a question mark may appear if the extension data
 
 ### The Info Popup
 The dialog opens after clicking on a disc icon and displays a list of the albums on which the track, album or artist scrobbles are distributed. The list is divided into album artist sections and may have a line for scrobbles  without album data. Hovering the scrobble numbers with the mouse lists the track titles.
+
 <p align="center">
     <img src="assets/info-popup.png" alt="info popup lists scrobbles by album" />
 </p>
+
 The track, album, and artist names are linked to their library page. However, if you hold down <kbd>Ctrl</kbd> while clicking the link, the Last.fm track, album, and artist page will open. Combined with <kbd>Win</kbd>, the requested page opens in a new browser tab.
 
 The checkboxes allow you to specify which scrobbles you want to edit together in the edit popup.
 
 ### The Edit Popup
 The edit popup is accessed via the _&bdquo;Edit Scrobbles"_ button in the Info Popup and it is used to combined edit the scrobbles of a track, album or artist together. The affected Scrobbles are limited to the albums previously selected in the Info Popup. 
+
 <p align="center">
     <img src="assets/edit-popup.png" alt="edit popup for bulk editing scrobbles" />
 </p>
+
 If the source data for an input field has several different values, the placeholder 'Mixed' is displayed in the field, and a text indicator below the field lists the source data when the mouse hovers it.
 
 When saving, the original data is retained for fields containing the 'Mixed' placeholder. If a value is entered in such a field, this value is applied to all scrobbles. For your inspection, the number of scrobbles affected by the edit is displayed at the bottom of the form.
@@ -95,10 +103,10 @@ A maximum of about 10 to 12 background jobs are executed per minute, and if Last
 When enabled, ScrobbleScrubbler checks for new scrobbles every 10 minutes and for new edits every 20 minutes to retrieve them and update its database. The buttons can be used to trigger an immediate update. The first page with 50 scrobbles or edits is read directly; for subsequent pages with new data background jobs are created.
 
 ### Deleting Scrobbles and Automatic Track Edits
-To delete scrobbles and automatic track edits on Last.fm, ScrobbleScrubbler uses an external tool that allows access to the scrobble and edit data stored in the browser. [Kahuna](https://github.com/hummingme/kahuna), the IndexedDB Manager, is a browser extension for [Firefox](https://addons.mozilla.org/en-US/firefox/addon/kahuna-the-indexeddb-manager/) and [Chromium](https://chromewebstore.google.com/detail/kahuna/ilafpdbgcaodnkdklgemggjamhpdjile) browsers that allows the selection of scrobbles and edits and generates background jobs for ScrobbleScrubbler from them.
+To delete scrobbles and automatic track edits on Last.fm, ScrobbleScrubbler uses an external tool that allows access to the scrobble and edit data stored in the browser. [Kahuna](https://github.com/hummingme/kahuna), the IndexedDB Manager, is a browser extension for [Firefox](https://addons.mozilla.org/en-US/firefox/addon/kahuna-the-indexeddb-manager/) and [Chromium](https://chromewebstore.google.com/detail/kahuna/ilafpdbgcaodnkdklgemggjamhpdjile) browsers that allows the selection of scrobbles and edits and generates background jobs for ScrobbleScrubbler to delete them.
 
 <p align="center">
-    <img src="assets/delete-selected-scrobbles.png" alt="ScrobbleScrubbler's Control Cener" />
+    <img src="assets/delete-selected-scrobbles.png" alt="using Kahuna's selection tools to delete scrobbles on Last.fm" />
 </p>
 
 There is [detailed documentation](https://hummingme.github.io/kahuna-docs/) for Kahuna, but here is an overview of the necessary steps to delete scrobbles after installing Kahuna:
@@ -148,9 +156,7 @@ No, they haven't been forgotten, but I don't use them and don't have any test da
 The automatic edits data ist not supported by the API. And the [API call](https://www.last.fm/api/show/user.getRecentTracks) to retrieve scrobble data does not contain data about the album artist, which may be different from the track artist, and which is a prerequisite for editing scrobbles.
 
 ### ScrobbleScrubbler is so great, how can I show my support?<a id="faq7"></a>
-Thank you so much! I am very happy about any feedback, whether in words or in the form of a github star for this repository or a positive review in the [Chrome Web Store](https://chromewebstore.google.com/detail/scrobblescrubbler/) or the [Firefox Addons Page](https://addons.mozilla.org/en-US/firefox/addon/scrobblescrubbler/).
-
-Or use this link, [https://buymeacoffee.com/hummingme](https://buymeacoffee.com/hummingme), to show your appreciation.
+Thank you so much! I am very happy about any feedback, whether in words or in the form of a github star for this repository or a positive review in the [Chrome Web Store](https://chromewebstore.google.com/detail/scrobblescrubbler/) or the [Firefox Addons Page](https://addons.mozilla.org/en-US/firefox/addon/scrobblescrubbler/). Or use [https://buymeacoffee.com/hummingme](https://buymeacoffee.com/hummingme) to show your appreciation.
 
 ## 🛠️ Build and Install from Source
 Installing [bun](https://bun.com/docs/installation) is a prerequisite. Then do:
@@ -158,7 +164,7 @@ Installing [bun](https://bun.com/docs/installation) is a prerequisite. Then do:
 git clone https://github.com/hummingme/scrobblescrubbler.git
 cd scrobblescrubbler
 bun install 
-bun run release firefox & bun run release chromium
+bun release firefox & bun release chromium
 ```
 
 ## 👷‍♂️ Contributing

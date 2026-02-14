@@ -1,0 +1,137 @@
+/**
+ * SPDX-FileCopyrightText: 2026 <Lutz Brückner> <dev@kahuna.rocks>
+ * SPDX-License-Identifier: GPL-3-0-or-later
+ */
+
+body {
+    --nice-font-family:
+        -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu,
+        Cantarell, 'Helvetica Neue', sans-serif;
+    --nice-font-size: 15px;
+    --nice-grey-100: #f9fafc;
+    --nice-grey-600: #6c6c6e;
+    --nice-grey-900: #202020;
+    font-size: var(--nice-font-size);
+    font-family: var(--nice-font-family);
+    color: var(--nice-grey-900);
+    background-color: var(--nice-grey-100);
+    min-width: 350px;
+}
+
+#loading-message {
+    max-width: fit-content;
+    margin: 30px auto;
+    font-weight: bold;
+    font-style: italic;
+}
+#popup-content {
+    margin: 10px;
+}
+h1 {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+button {
+    background-color: #2e8945;
+    color: var(--nice-grey-100);
+    border: none;
+    border-radius: 3px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    line-height: 21px;
+    padding: 2px 8px;
+    margin-left: 1em;
+}
+button:hover {
+    background-color: #479d5c;
+}
+button:active {
+    background-color: #606c5c;
+}
+
+form#switches {
+    width: max-content;
+    p {
+        margin: 4px 0;
+    }
+    p.indent {
+        margin-left: 26px;
+    }
+    button {
+        margin-left: 1em;
+    }
+    ul {
+        margin: 3px 0 7px;
+        padding: 0 25px;
+    }
+    li {
+        list-style-type: none;
+    }
+}
+
+.red {
+    color: #d92323;
+    font-weight: 500;
+}
+.green {
+    color: #2e8945;
+    font-weight: 500;
+}
+.pulse-grey {
+    animation: pulse-grey 2s infinite;
+}
+@keyframes pulse-grey {
+    0% {
+        color: var(--nice-grey-900);
+    }
+    50% {
+        color: var(--nice-grey-600);
+    }
+    100% {
+        color: var(--nice-grey-900);
+    }
+}
+
+.pulse-red {
+    animation: pulse-red 2s infinite;
+}
+@keyframes pulse-red {
+    0% {
+        background-color: #d92323;
+    }
+    50% {
+        background-color: #ff003c;
+    }
+    100% {
+        background-color: #d92323;
+    }
+}
+
+div.advice {
+    max-width: 500px;
+    em {
+        font-weight: 600;
+        font-style: normal;
+    }
+    em.center {
+        display: block;
+        text-align: center;
+        margin: 0.8em 0 0.2em;
+    }
+    p {
+        line-height: 1.3;
+    }
+}
+div.start-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 70px;
+    button {
+        background-color: #d92323;
+        padding: 10px 30px;
+        text-transform: uppercase;
+    }
+}

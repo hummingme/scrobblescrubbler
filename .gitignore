@@ -1,0 +1,9 @@
+package-lock.json
+bun.lock
+node_modules/
+build/
+resources/
+webext/
+**/#*
+**/.#*
+**/*.zip
