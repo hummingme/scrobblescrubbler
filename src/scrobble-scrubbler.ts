@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: GPL-3-0-or-later
  */
 
+import { externalEditAlbum } from './lib/edit-album.ts';
 import { externalDeleteScrobble } from './lib/delete-scrobble.ts';
 import { externalDeleteTrackedit } from './lib/delete-trackedit.ts';
 import { externalEditScrobble } from './lib/edit-scrobble.ts';
@@ -37,6 +38,8 @@ if (userName !== '' && isLastfmPro()) {
             startBackgroundOperations(userName);
         } else if (type === 'EXTERNAL_EDIT_SCROBBLE') {
             externalEditScrobble(message.data);
+        } else if (type === 'EXTERNAL_EDIT_ALBUM') {
+            externalEditAlbum(message.data);
         } else if (type === 'EXTERNAL_DELETE_SCROBBLE') {
             externalDeleteScrobble(message.data);
         } else if (type === 'EXTERNAL_DELETE_TRACKEDIT') {

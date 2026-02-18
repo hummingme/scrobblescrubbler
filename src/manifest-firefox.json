@@ -5,7 +5,6 @@
     "description": "Instant insights and bulk editing for your last.fm scrobbles, and more.",
     "author": "Lutz Brückner",
     "homepage_url": "https://github.com/hummingme/scrobblescrubbler#readme",
-    "license": "GPL-3.0-or-later",
     "icons": {
         "48": "static/icons/scrubbler-disc_48.png",
         "128": "static/icons/scrubbler-disc_128.png"
@@ -40,7 +39,10 @@
     "browser_specific_settings": {
         "gecko": {
             "id": "scrobble-scrubbler@kahuna.rocks",
-            "strict_min_version": "128.0"
+            "strict_min_version": "128.0",
+            "data_collection_permissions": {
+                "required": ["none"]
+            }
         }
     }
 }

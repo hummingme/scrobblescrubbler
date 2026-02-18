@@ -11,7 +11,7 @@ Have you ever wished for a Last.fm that instantly displays your scrobble counts 
 * After installation, all scrobbles and saved automatic track edits are downloaded once in the background and saved in the browser.
 * With [Kahuna](https://github.com/hummingme/kahuna)'s support, the scrobbles and automatic track edits data stored in the browser can be listed, filtered, selected. And the deletion of the data on Last.fm can be initiated.
 
-Please read the [Usage](#usage) section for details.
+Please read the [Usage](#%EF%B8%8F-usage) section for details.
 
 ## 💀 Warning
 First, by maintaining its own database, ScrobbleScrubbler violates the good practice of the [_&bdquo;Single Source of Truth"_](https://en.wikipedia.org/wiki/Single_source_of_truth). Last.fm is always correct, and there are many reasons why the extensions database can fall behind and display incomplete or incorrect data. The main reason for this is when scrobbles are edited in a different browser.
@@ -23,10 +23,10 @@ Third, the extension is developed exclusively using my own Last.fm library as a 
 On the good news, I've been using ScrobbbleScrubbler for more than half a year now and it has absolutely changed my life for the better ☺️.
 
 ## 🛸 Installation 
-Please download and install the extension from the [Chrome Web Store](https://chromewebstore.google.com/detail/scrobblescrubbler/) for Chrome and Chromium based browsers such as Edge, Brave, and Opera, and from the [Firefox Addons Page](https://addons.mozilla.org/en-US/firefox/addon/scrobblescrubbler) for Firefox.
+Please download and install the extension from the [Chrome Web Store](https://chromewebstore.google.com/detail/scrobblescrubbler/aagaghbcjcfmaplbckmjphchmbgbpblh) for Chrome and Chromium based browsers such as Edge, Brave, and Opera, and from the [Firefox Addons Page](https://addons.mozilla.org/en-US/firefox/addon/scrobblescrubbler) for Firefox.
 
 <div align="center">
-      <a href="https://chromewebstore.google.com/detail/scrobblescrubbler/">
+      <a href="https://chromewebstore.google.com/detail/scrobblescrubbler/aagaghbcjcfmaplbckmjphchmbgbpblh">
         <img src="assets/chrome-logo-64.png" width="64" alt="install ScrobbleScrubbler for Chrome" /></a>
       <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" width="40">
       <a href="https://addons.mozilla.org/en-US/firefox/addon/scrobblescrubbler/">
@@ -156,7 +156,7 @@ No, they haven't been forgotten, but I don't use them and don't have any test da
 The automatic edits data ist not supported by the API. And the [API call](https://www.last.fm/api/show/user.getRecentTracks) to retrieve scrobble data does not contain data about the album artist, which may be different from the track artist, and which is a prerequisite for editing scrobbles.
 
 ### ScrobbleScrubbler is so great, how can I show my support?<a id="faq7"></a>
-Thank you so much! I am very happy about any feedback, whether in words or in the form of a github star for this repository or a positive review in the [Chrome Web Store](https://chromewebstore.google.com/detail/scrobblescrubbler/) or the [Firefox Addons Page](https://addons.mozilla.org/en-US/firefox/addon/scrobblescrubbler/). Or use [https://buymeacoffee.com/hummingme](https://buymeacoffee.com/hummingme) to show your appreciation.
+Thank you so much! I am very happy about any feedback, whether in words or in the form of a github star for this repository or a positive review in the [Chrome Web Store](https://chromewebstore.google.com/detail/scrobblescrubbler/aagaghbcjcfmaplbckmjphchmbgbpblh) or the [Firefox Addons Page](https://addons.mozilla.org/en-US/firefox/addon/scrobblescrubbler/). Or use [https://buymeacoffee.com/hummingme](https://buymeacoffee.com/hummingme) to show your appreciation.
 
 ## 🛠️ Build and Install from Source
 Installing [bun](https://bun.com/docs/installation) is a prerequisite. Then do:

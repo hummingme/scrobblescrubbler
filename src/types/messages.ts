@@ -7,6 +7,7 @@ import type { InitState, SettingTypes } from './settings.ts';
 import type {
     DeleteTrackEditFormValues,
     DeleteFormValues,
+    EditAlbumFormValues,
     EditFormValues,
 } from '../types/lastfm.ts';
 
@@ -25,6 +26,7 @@ export type Message =
     | ContentReadyMessage
     | ExternalDeleteScrobbleMessage
     | ExternalDeleteTrackeditMessage
+    | ExternalEditAlbumMessage
     | ExternalEditScrobbleMessage
     | GetStateMesssage
     | InitializeInitMessage
@@ -59,6 +61,10 @@ export type ExternalDeleteScrobbleMessage = {
 export type ExternalDeleteTrackeditMessage = {
     type: 'EXTERNAL_DELETE_TRACKEDIT';
     data: DeleteTrackEditFormValues;
+};
+export type ExternalEditAlbumMessage = {
+    type: 'EXTERNAL_EDIT_ALBUM';
+    data: EditAlbumFormValues;
 };
 export type ExternalEditScrobbleMessage = {
     type: 'EXTERNAL_EDIT_SCROBBLE';

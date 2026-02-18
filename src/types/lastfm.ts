@@ -59,6 +59,15 @@ export type ExtendedEditFormValues = EditFormValues & {
     edit_all?: 'on';
 };
 
+export const editAlbumFormKeys = [
+    'album_name',
+    'album_name_original',
+    'album_artist_name',
+    'album_artist_name_original',
+] as const;
+export type EditAlbumFormKey = (typeof editAlbumFormKeys)[number];
+export type EditAlbumFormValues = Record<EditAlbumFormKey, string>;
+
 export const deleteFormKeys = ['artist_name', 'track_name', 'timestamp'] as const;
 export type DeleteFormKey = (typeof deleteFormKeys)[number];
 export type DeleteFormValues = Record<DeleteFormKey, string>;

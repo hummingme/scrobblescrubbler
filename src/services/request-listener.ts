@@ -6,6 +6,8 @@
 import { getActiveTabId } from '../lib/background.ts';
 import { namespace } from '../lib/runtime.ts';
 import {
+    type EditAlbumFormKey,
+    editAlbumFormKeys,
     type EditFormKey,
     editFormKeys,
     type DeleteTrackEditFormKey,
@@ -70,6 +72,8 @@ export default class RequestListener {
         if (!tabId) return;
         if (path.endsWith('/library/edit-track') || path.endsWith('/library/edit')) {
             this.editScrobble(formData, tabId);
+        } else if (path.endsWith('/library/edit-album')) {
+            this.editAlbum(formData, tabId);
         } else if (path.endsWith('/library/delete')) {
             this.deleteScrobble(formData, tabId);
         } else if (path.endsWith('automatic-edits/tracks')) {
@@ -91,13 +95,34 @@ export default class RequestListener {
         }
         if (editFormKeys.every((key) => !!data[key])) {
             try {
-                this.log(`Send edit scrobble, data: ${JSON.stringify(data)}`);
+                this.log(`Send edit scrobble message, data: ${JSON.stringify(data)}`);
                 await namespace.tabs.sendMessage(tabId, {
                     type: 'EXTERNAL_EDIT_SCROBBLE',
                     data,
                 });
             } catch (error) {
-                throw Error(`Sending message failed, ${error}`);
+                throw Error(`Sending EXTERNAL_EDIT_SCROBBLE message failed, ${error}`);
+            }
+        }
+    }
+    async editAlbum(formData: FormDataEntry, tabId: number) {
+        if (formData['submit']?.[0] !== 'edit-album') return;
+        const data = {} as Record<EditAlbumFormKey, string>;
+        for (const key of editAlbumFormKeys) {
+            const value = formData[key]?.[0];
+            if (typeof value === 'string') {
+                data[key] = value.trim();
+            }
+        }
+        if (editAlbumFormKeys.every((key) => !!data[key])) {
+            try {
+                this.log(`Send album edit message, data: ${JSON.stringify(data)}`);
+                await namespace.tabs.sendMessage(tabId, {
+                    type: 'EXTERNAL_EDIT_ALBUM',
+                    data,
+                });
+            } catch (error) {
+                throw Error(`Sending EXTERNAL_EDIT_ALBUM message failed, ${error}`);
             }
         }
     }
@@ -132,13 +157,13 @@ export default class RequestListener {
         }
         if (deleteTrackEditFormKeys.every((key) => !!data[key])) {
             try {
-                this.log(`Send delete track edit, data: ${JSON.stringify(data)}`);
+                this.log(`Send delete track edit message, data: ${JSON.stringify(data)}`);
                 await namespace.tabs.sendMessage(tabId, {
                     type: 'EXTERNAL_DELETE_TRACKEDIT',
                     data,
                 });
             } catch (error) {
-                throw Error(`Sending message failed, ${error}`);
+                throw Error(`Sending EXTERNAL_DELETE_TRACKEDIT message failed, ${error}`);
             }
         }
     }
