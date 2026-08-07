@@ -26,6 +26,7 @@ import ScrobbleChecker from './services/scrobble-checker.ts';
 import { log } from './services/logger.ts';
 import ScrobblesRefetcher from './services/scrobbles-refetcher.ts';
 import Settings from './services/settings.ts';
+import SiteImprover from './services/site-improver.ts';
 import type { Message } from './types/messages.ts';
 
 const userName = getUserName();
@@ -45,7 +46,7 @@ if (userName !== '' && isLastfmPro()) {
         } else if (type === 'EXTERNAL_DELETE_TRACKEDIT') {
             externalDeleteTrackedit(message.data);
         } else if (type === 'RELOAD_TAB') {
-            loadUrl(message.url);
+            loadUrl(message.url, true);
         }
     });
     messageBackground({ type: 'CONTENT_READY' });
@@ -188,12 +189,14 @@ async function startObserver(db: ScrobbleScrubblerDB) {
     const chartTablesDecorator = new ChartTablesDecorator(db);
     const scrobbleTablesDecorator = new ScrobbleTablesDecorator(db);
     const headerDecorator = new HeaderDecorator(db);
+    const siteImprover = new SiteImprover(db);
     const body = document.body;
     if (body) {
         const observer = createObserver(
             chartTablesDecorator,
             scrobbleTablesDecorator,
             headerDecorator,
+            siteImprover,
         );
         observer.observe(body, {
             childList: true,
@@ -202,6 +205,7 @@ async function startObserver(db: ScrobbleScrubblerDB) {
         chartTablesDecorator.prepareTables(document.documentElement);
         scrobbleTablesDecorator.prepareTables(document.documentElement);
         headerDecorator.prepareHeader(document.documentElement);
+        siteImprover.process(document.documentElement);
     }
     return scrobbleTablesDecorator;
 }
@@ -210,6 +214,7 @@ function createObserver(
     chartTablesDecorator: ChartTablesDecorator,
     scrobbleTablesPlugin: ScrobbleTablesDecorator,
     headlineDecorator: HeaderDecorator,
+    siteImprover: SiteImprover,
 ) {
     return new MutationObserver((mutations: MutationRecord[]) => {
         if (!isUserUrl(location.href)) {
@@ -228,6 +233,13 @@ function createObserver(
                     scrobbleTablesPlugin.prepareTables(node);
                     chartTablesDecorator.prepareTables(node);
                     headlineDecorator.prepareHeader(node);
+                }
+                if (
+                    node instanceof HTMLDivElement &&
+                    node.id.length === 0 &&
+                    node.className.length === 0
+                ) {
+                    siteImprover.process(node);
                 }
             }
         }

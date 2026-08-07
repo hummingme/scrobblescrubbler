@@ -89,11 +89,8 @@ chrome.runtime.onInstalled.addListener(async () => {
                 target: { tabId },
                 files: ['scrobble-scrubbler.js'],
             })
-            .catch((err) => {
-                console.error(
-                    `Failed to inject scrobble-scrubbler.js into ${tabId}:`,
-                    err,
-                );
+            .catch((error) => {
+                err(`Failed to inject scrobble-scrubbler.js into ${tabId}:, ${error}`);
             });
     }
 });
@@ -202,5 +199,12 @@ function log(message: string) {
     if (loggingEnabled) {
         // eslint-disable-next-line no-console
         console.log(`${prefix} ${message}`);
+    }
+}
+function err(message: string) {
+    const prefix = '[ScrobbleScrubbler:Background]';
+    if (loggingEnabled) {
+        // eslint-disable-next-line no-console
+        console.error(`${prefix} ${message}`);
     }
 }

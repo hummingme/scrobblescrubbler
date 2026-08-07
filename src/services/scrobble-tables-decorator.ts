@@ -8,7 +8,7 @@ import Settings from './settings.ts';
 import MissingIcon from '../icons/missing-icon.ts';
 import TrackIcon from '../icons/track-icon.ts';
 import { getTrackScrobbles } from '../lib/data-queries.ts';
-import fixCapitalization from '../lib/fix-capitalization.ts';
+import { fixCapitalization } from '../lib/fix-capitalization.ts';
 import {
     editScrobbleFormSelector,
     getTimestampFromRow,

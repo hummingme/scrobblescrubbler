@@ -12,6 +12,7 @@ import {
 import { ScrobbleScrubblerDB } from '../services/database.ts';
 import InfoPopup from '../services/info-popup.ts';
 import type { ScrubblerItem } from '../types/scrubbler.ts';
+import { isLibraryTrackLink, isLibraryUrl } from '../lib/library-links.ts';
 
 type TrackStats = Awaited<ReturnType<typeof getTrackStats>>;
 
@@ -22,7 +23,11 @@ export default class TrackIcon extends InfoIcon {
     async addIcon(target: HTMLElement, item: ScrubblerItem) {
         this.item = item;
         const stats: TrackStats = await getTrackStats(this.db, item);
-        if (stats.scrobblesCount === 0) return;
+        if (
+            stats.scrobblesCount === 0 &&
+            (!isLibraryUrl(location.href) || isLibraryTrackLink(location.href))
+        )
+            return;
 
         this.setTitle(stats);
         let added = false;

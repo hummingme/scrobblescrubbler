@@ -23,8 +23,10 @@ export function getUserName() {
     return userName;
 }
 
-export function isLastfmPro() {
-    return !!document.querySelector<HTMLElement>('div.masthead-pro-wrap');
+export function isLastfmPro(): boolean {
+    const data = document.querySelector<HTMLElement>('#tlmdata')?.dataset.tealiumData;
+    if (!data) return false;
+    return JSON.parse(data).userType === 'paid';
 }
 
 // forms added by Bulk Edit userscript have additional data-bulk-edit-scrobbles attribute

@@ -72,7 +72,7 @@ The dialog opens after clicking on a disc icon and displays a list of the albums
     <img src="assets/info-popup.png" alt="info popup lists scrobbles by album" />
 </p>
 
-The track, album, and artist names are linked to their library page. However, if you hold down <kbd>Ctrl</kbd> while clicking the link, the Last.fm track, album, and artist page will open. Combined with <kbd>Win</kbd>, the requested page opens in a new browser tab.
+The track, album, and artist names are linked to their library page. However, if you hold down <kbd>Ctrl</kbd> while clicking the link, the Last.fm track, album, and artist page will open.
 
 The checkboxes allow you to specify which scrobbles you want to edit together in the edit popup.
 

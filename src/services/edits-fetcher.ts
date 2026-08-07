@@ -183,7 +183,7 @@ export default class EditsFetcher {
             }
         });
 
-        let position = count - 50 * --page;
+        let position = count - 50 * (page - 1);
         const editRows: (TrackEdit & { position: number })[] = [];
         for (const edit of edits) {
             const hash = EditsFetcher.hash(edit);

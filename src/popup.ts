@@ -67,11 +67,7 @@ function updateView(state: StatePayload) {
         );
     }
 }
-/***
-   
 
-
- ***/
 function waitingView(state: StatePayload) {
     return html`
         ${headline()} ${waitingAdvice(state)}
@@ -168,7 +164,18 @@ function view(state: StatePayload) {
 
 function headline() {
     return html`
-        <h1>ScrobbleScrubbler Control Center</h1>
+        <h1>
+            ScrobbleScrubbler Control Center
+            <div class="headline-links">
+                <div class="headline-bar"></div>
+                <a
+                    class="github-readme"
+                    href="https://github.com/hummingme/scrobblescrubbler#%EF%B8%8F-usage"
+                    title="read the documetation on github"
+                    target="_blank"
+                ></a>
+            </div>
+        </h1>
     `;
 }
 
@@ -293,15 +300,12 @@ function startClicked() {
     }
 }
 
-async function checkboxChanged(event: Event) {
-    const target = event.target;
-    if (target instanceof HTMLInputElement) {
-        if (activeTabId) {
-            namespace.tabs.sendMessage(activeTabId, {
-                type: 'SET_STATE',
-                payload: Object.fromEntries([[target.name, target.checked]]),
-            });
-        }
+async function checkboxChanged(this: HTMLInputElement) {
+    if (activeTabId) {
+        namespace.tabs.sendMessage(activeTabId, {
+            type: 'SET_STATE',
+            payload: Object.fromEntries([[this.name, this.checked]]),
+        });
     }
 }
 async function sendCheckNow(subject: 'scrobbles' | 'edits', event: Event) {

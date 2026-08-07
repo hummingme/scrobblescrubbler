@@ -468,11 +468,8 @@ export default class EditPopup {
             (item) => item.album === source.value,
         )[0].artist;
     }
-    onChange(event: Event) {
-        const target = event.target;
-        if (target instanceof HTMLInputElement) {
-            target.value = target.value.trim();
-        }
+    onChange(this: HTMLInputElement) {
+        this.value = this.value.trim();
     }
     saveEditJobs(event: Event) {
         event.preventDefault();

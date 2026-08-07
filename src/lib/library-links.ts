@@ -11,8 +11,7 @@ import { loadUrl } from './load-url.ts';
 export function libraryTrackLink(trackname: string, artistname: string) {
     const track = encode(trackname);
     const artist = encode(artistname);
-    const noRedirect = noredirect(artistname);
-    const url = `${getUserUrl()}/library/music/${noRedirect}${artist}/_/${track}`;
+    const url = `${getUserUrl()}/library/music/+noredirect/${artist}/_/${track}`;
     return html`
         <a @click="${libraryLinkClicked}" href="${url}">${trackname}</a>
     `;
@@ -21,8 +20,7 @@ export function libraryTrackLink(trackname: string, artistname: string) {
 export function libraryAlbumLink(albumname: string, artistname: string) {
     const album = encode(albumname);
     const artist = encode(artistname);
-    const noRedirect = noredirect(artistname);
-    const url = `${getUserUrl()}/library/music/${noRedirect}${artist}/${album}`;
+    const url = `${getUserUrl()}/library/music/+noredirect/${artist}/${album}`;
     return html`
         <a @click="${libraryLinkClicked}" href="${url}">${albumname}</a>
     `;
@@ -30,8 +28,7 @@ export function libraryAlbumLink(albumname: string, artistname: string) {
 
 export function libraryArtistLink(artistname: string, linkText?: string) {
     const artist = encode(artistname);
-    const noRedirect = noredirect(artistname);
-    const url = `${getUserUrl()}/library/music/${noRedirect}${artist}`;
+    const url = `${getUserUrl()}/library/music/+noredirect/${artist}`;
     return html`
         <a @click="${libraryLinkClicked}" href="${url}">
             ${linkText ? linkText : artistname}
@@ -56,20 +53,22 @@ export function isLibraryTrackLink(url: string) {
     return isLibraryUrl(url) && url.includes('/_/');
 }
 
-function noredirect(artistname: string) {
-    return '+noredirect/';
-    return document.location.pathname.includes(`/+noredirect/${artistname}`)
-        ? '+noredirect/'
-        : '';
+export function isLibraryArtistLink(url: string) {
+    if (!isLibraryUrl(url)) return false;
+    const path = url.slice(`${getUserUrl()}/library/music/`.length);
+    return !path.includes('/+albums') && !path.includes('/+tracks');
 }
 
-function libraryLinkClicked(event: MouseEvent) {
-    const target = event.target;
-    if (target instanceof HTMLAnchorElement && (event.ctrlKey || event.metaKey)) {
-        event.preventDefault();
-        const url = event.ctrlKey
-            ? target.href.replace(`${getUserUrl()}/library`, '')
-            : target.href;
-        loadUrl(url, event.metaKey);
+// click            -> opens the library link in the same tab
+// ctrl-click       -> opens the item link in the same tab
+function libraryLinkClicked(this: HTMLAnchorElement, event: MouseEvent) {
+    const isCtrl = event.ctrlKey;
+    if (!isCtrl) {
+        return;
     }
+    event.preventDefault();
+    const targetUrl = isCtrl
+        ? this.href.replace(`${getUserUrl()}/library`, '')
+        : this.href;
+    loadUrl(targetUrl);
 }

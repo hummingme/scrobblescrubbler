@@ -5,6 +5,7 @@
 
 import InfoIcon from './info-icon.ts';
 import { getAlbumStats } from '../lib/data-queries.ts';
+import { hasDivergentAlbumCapitalizations } from '../lib/fix-capitalization.ts';
 import { emptyScrubblerItem } from '../lib/scrubbler.ts';
 import { ScrobbleScrubblerDB } from '../services/database.ts';
 import InfoPopup from '../services/info-popup.ts';
@@ -20,7 +21,13 @@ export default class AlbumIcon extends InfoIcon {
         this.item = item;
         const stats: AlbumStats = await getAlbumStats(this.db, item);
         if (stats.scrobbelsCount === 0) return;
-
+        if (
+            stats.albumTitleAlbumsCount > 1 &&
+            (await hasDivergentAlbumCapitalizations(item, this.db))
+        ) {
+            // force calling fixCapitalization() in the decorator
+            return;
+        }
         this.setTitle(stats);
         let added = false;
         if (this.isTargetChartTable(target)) {

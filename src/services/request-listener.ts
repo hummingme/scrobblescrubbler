@@ -101,7 +101,9 @@ export default class RequestListener {
                     data,
                 });
             } catch (error) {
-                throw Error(`Sending EXTERNAL_EDIT_SCROBBLE message failed, ${error}`);
+                throw Error(`Sending EXTERNAL_EDIT_SCROBBLE message failed, ${error}`, {
+                    cause: error,
+                });
             }
         }
     }
@@ -122,7 +124,9 @@ export default class RequestListener {
                     data,
                 });
             } catch (error) {
-                throw Error(`Sending EXTERNAL_EDIT_ALBUM message failed, ${error}`);
+                throw Error(`Sending EXTERNAL_EDIT_ALBUM message failed, ${error}`, {
+                    cause: error,
+                });
             }
         }
     }
@@ -142,7 +146,9 @@ export default class RequestListener {
                     data,
                 });
             } catch (error) {
-                throw Error(`Sending message failed, ${error}`);
+                throw Error(`Sending message failed, ${error}`, {
+                    cause: error,
+                });
             }
         }
     }
@@ -163,7 +169,12 @@ export default class RequestListener {
                     data,
                 });
             } catch (error) {
-                throw Error(`Sending EXTERNAL_DELETE_TRACKEDIT message failed, ${error}`);
+                throw Error(
+                    `Sending EXTERNAL_DELETE_TRACKEDIT message failed, ${error}`,
+                    {
+                        cause: error,
+                    },
+                );
             }
         }
     }

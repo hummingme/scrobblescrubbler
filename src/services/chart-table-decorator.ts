@@ -10,7 +10,7 @@ import ArtistIcon from '../icons/artist-icon.ts';
 import MissingIcon from '../icons/missing-icon.ts';
 import TrackIcon from '../icons/track-icon.ts';
 import { getTrackScrobbles } from '../lib/data-queries.ts';
-import fixCapitalization from '../lib/fix-capitalization.ts';
+import { fixCapitalization } from '../lib/fix-capitalization.ts';
 import { isUserUrl } from '../lib/library-links.ts';
 import { itemLinkSubject } from '../lib/item-links.ts';
 import {
@@ -25,11 +25,11 @@ import type { LibrarySubject } from '../types/lastfm.ts';
 import type { ScrubblerItem } from '../types/scrubbler.ts';
 
 /*
- * add icons to lists of individual scrobbles that are displayed with time information
+ * add icons to chart views of artists, albums, and tracks
  *
  * used on
- *
- *
+ *   - user profile page for the tables of top artists, top albums, and top tracks
+ *   - user library pages for tables of albums and tracks
  */
 export default class ChartTablesDecorator {
     db: ScrobbleScrubblerDB;

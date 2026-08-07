@@ -46,14 +46,15 @@ export default class ScrobbleChecker {
         );
         try {
             const stored = await this.getStoredScrobbles(timestamp); // from database
-            const { existing, page } = await this.findScrobbles(
-                timestamp,
-                stored.length === 0,
-            ); // on website
-            if (existing.length === 0) {
+            const storedMissing = stored.length === 0;
+
+            const { existing, page } = await this.findScrobbles(timestamp, storedMissing); // on website
+            const existingMissing = existing.length === 0;
+
+            if (existingMissing) {
                 await this.deleteStoredScrobbles(timestamp);
                 reloadPage();
-            } else if (stored.length > 0) {
+            } else if (!storedMissing) {
                 const { storedScrobble, existingScrobble } = this.divergentScrobble(
                     stored,
                     existing,
@@ -65,7 +66,7 @@ export default class ScrobbleChecker {
                     this.showRefetchDialog(timestamp, page);
                 }
             } else {
-                // existing.length > 0 && stored.length === 0
+                // storedMissing && !existingMissing
                 this.showRefetchDialog(timestamp, page);
             }
             this.stopSpinning();
@@ -193,11 +194,13 @@ export default class ScrobbleChecker {
         if (
             !affectedCounts.artist_name &&
             modifications.album_artist_name &&
-            oldScrobble.album_artist_name
+            oldScrobble.album_artist_name &&
+            oldScrobble.album_name
         ) {
-            affectedCounts.album_artist_name = await albumArtistScrobblesCount(
+            affectedCounts.album_artist_name = await albumScrobblesCount(
                 this.db,
                 oldScrobble.album_artist_name,
+                oldScrobble.album_name,
             );
         }
         return affectedCounts;
@@ -302,8 +305,10 @@ export default class ScrobbleChecker {
                 return libraryAlbumLink(scrobble.album_name || '', artistName);
             }
             case 'artist_name':
-            case 'album_artist_name':
                 return libraryArtistLink(scrobble.artist_name);
+            case 'album_artist_name':
+                const artistName = scrobble.album_artist_name || scrobble.artist_name;
+                return libraryArtistLink(artistName);
         }
     }
     showRefetchDialog(timestamp: number, page: number) {
@@ -351,11 +356,18 @@ export default class ScrobbleChecker {
         const db = await openDatabase(userName);
         Object.entries(modifications).forEach(async ([property, entry]) => {
             const { stored, existing } = entry;
-            if (['artist_name', 'album_artist_name'].includes(property)) {
+            console.log('property, stored, existing: ', property, stored, existing);
+            if (property === 'artist_name') {
                 await db.scrobbles
-                    .where(property)
+                    .where('artist_name')
                     .equals(stored)
-                    .modify({ [property]: existing });
+                    .modify({ artist_name: existing });
+            } else if (property === 'album_artist_name' && existingScrobble.album_name) {
+                await db.scrobbles
+                    .where('album_name')
+                    .equals(existingScrobble.album_name)
+                    .and((scrobble: Scrobble) => scrobble.album_artist_name === stored)
+                    .modify({ album_artist_name: existing });
             } else {
                 const artistProperty =
                     property === 'album_name' ? 'album_artist_name' : 'artist_name';

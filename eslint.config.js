@@ -3,9 +3,9 @@ import eslint from '@eslint/js';
 import tseslint from 'typescript-eslint';
 import prettierFlat from 'eslint-config-prettier/flat';
 
-export default tseslint.config(
+export default [
     eslint.configs.recommended,
-    tseslint.configs.recommended,
+    ...tseslint.configs.recommended.flat(Infinity),
     {
         files: ['**/*.ts'],
         languageOptions: {
@@ -35,4 +35,4 @@ export default tseslint.config(
         },
     },
     prettierFlat,
-);
+];

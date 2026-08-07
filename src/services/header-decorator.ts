@@ -7,21 +7,22 @@ import { ScrobbleScrubblerDB } from './database.ts';
 import Settings from './settings.ts';
 import AlbumIcon from '../icons/album-icon.ts';
 import ArtistIcon from '../icons/artist-icon.ts';
+import InfoIcon from '../icons/info-icon.ts';
 import MissingIcon from '../icons/missing-icon.ts';
 import TrackIcon from '../icons/track-icon.ts';
-import fixCapitalization from '../lib/fix-capitalization.ts';
+import { fixCapitalization } from '../lib/fix-capitalization.ts';
 import { isLibraryUrl } from '../lib/library-links.ts';
 import { emptyScrubblerItem } from '../lib/scrubbler.ts';
 import type { LibrarySubject } from '../types/lastfm.ts';
 import type { ScrubblerItem } from '../types/scrubbler.ts';
 
 /*
- * add icons to lists of individual scrobbles that are displayed with time information
+ * add an icon to the header of library pages
  *
  * used on
- *   - user profile page, https://www.last.fm/user/iriebob
- *   - library scrobble history, https://www.last.fm/user/iriebob/library?page=2
- *   - library track pages, https://www.last.fm/user/iriebob/library/music/The+Divine+Comedy/_/Assume+the+Perpendicular
+ *   - artist library pages, https://www.last.fm/user/iriebob/library/music/Lambchop
+ *   - artist album library pages, https://www.last.fm/user/iriebob/library/music/Lambchop/How+I+Quit+Smoking
+ *   - artist track library pages, https://www.last.fm/user/iriebob/library/music/Lambchop/_/The+Saturday+Option
  */
 export default class HeaderDecorator {
     db: ScrobbleScrubblerDB;
@@ -48,8 +49,7 @@ export default class HeaderDecorator {
         this.pageSubject = this.determinePageSubject();
         if (!this.pageSubject) return;
 
-        const item = (this.item = this.determineScrubblerItem(this.pageSubject, header));
-        let icon = null;
+        let icon: InfoIcon;
         if (this.pageSubject === 'album') {
             icon = new AlbumIcon(this.db);
         } else if (this.pageSubject === 'artist') {
@@ -58,6 +58,10 @@ export default class HeaderDecorator {
             icon = new TrackIcon(this.db);
         }
         if (icon) {
+            const item = (this.item = this.determineScrubblerItem(
+                this.pageSubject,
+                header,
+            ));
             const iconNode = await icon.addIcon(target, item);
             if (!iconNode && initState === 'ready') {
                 let needsMissingIcon = true;

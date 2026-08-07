@@ -19,7 +19,7 @@ export default abstract class Icon {
     abstract addIcon(
         target: HTMLElement,
         item: ScrubblerItem,
-        subject: LibrarySubject,
+        subject?: LibrarySubject,
     ): Promise<HTMLElement | undefined>;
     abstract click(event: MouseEvent): void;
     isTargetChartTable(node: HTMLElement) {
