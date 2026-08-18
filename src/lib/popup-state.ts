@@ -4,13 +4,13 @@
  */
 
 import { waitingJobsCount } from './jobs-count.ts';
-import { ScrobbleScrubblerDB } from '../services/database.ts';
+import { ScrubblerDB } from '../services/database.ts';
 import Settings from '../services/settings.ts';
 import type JobRunner from '../services/job-runner.ts';
 import type { SendStateMesssage } from '../types/messages.ts';
 
 export default async function popupState(
-    db: ScrobbleScrubblerDB,
+    db: ScrubblerDB,
     jobRunner: JobRunner,
 ): Promise<SendStateMesssage> {
     const {

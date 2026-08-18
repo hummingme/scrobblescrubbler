@@ -6,7 +6,7 @@
 import { html, type TemplateResult } from 'lit-html';
 import { ref } from 'lit/directives/ref.js';
 
-import { ScrobbleScrubblerDB } from './database.ts';
+import { ScrubblerDB } from './database.ts';
 import EditPopup from './edit-popup.ts';
 import { error } from './logger.ts';
 import checkbox from '../lib/checkbox.ts';
@@ -22,10 +22,18 @@ import {
     type ArtistAlbumCountMap,
 } from '../lib/data-queries.ts';
 import {
+    fixCapitalization,
+    hasDivergentAlbumArtistCapitalizations,
+    hasDivergentAlbumCapitalizations,
+    hasDivergentTrackCapitalizations,
+} from '../lib/fix-capitalization.ts';
+import { addIgnoredSameTitle } from '../lib/ignored-same-title.ts';
+import {
     libraryAlbumLink,
     libraryArtistLink,
     libraryTrackLink,
 } from '../lib/library-links.ts';
+import { reloadPage } from '../lib/load-url.ts';
 import ModalDialog from '../lib/modal-dialog.ts';
 import { mapScrobbleCounts, tracksCountsTitle } from '../lib/scrobble-maps.ts';
 import type { Scrobble } from '../types/lastfm.ts';
@@ -34,7 +42,7 @@ import type { ScrubblerItem, ScrubblerSubject } from '../types/scrubbler.ts';
 type InfoPopupStats = Awaited<ReturnType<typeof InfoPopup.prototype.getStatistics>>;
 
 export default class InfoPopup {
-    db: ScrobbleScrubblerDB;
+    db: ScrubblerDB;
     item: ScrubblerItem;
     subject: ScrubblerSubject;
     anchor: HTMLElement;
@@ -46,7 +54,7 @@ export default class InfoPopup {
     checkedAlbums: CheckedAlbums = new Map();
     constructor(
         anchor: HTMLElement,
-        db: ScrobbleScrubblerDB,
+        db: ScrubblerDB,
         item: ScrubblerItem,
         subject: ScrubblerSubject,
     ) {
@@ -58,6 +66,7 @@ export default class InfoPopup {
     }
     async show() {
         try {
+            await this.verifyCapitalization();
             this.stats = await this.getStatistics();
             this.artistScrobblesCount = await this.queryArtistScrobblesCount();
             this.albumScrobblesCount = await this.queryAlbumScrobblesCount();
@@ -126,8 +135,7 @@ export default class InfoPopup {
                 ${this.overviewLine()} ${this.scrobbleSumsLine()}
                 ${this.albumsList(this.stats)}
                 <div class="scrobble-scrubbler-buttons">
-                    ${this.editButton()}${this.closeButton()}
-                    <div class="scrobble-scrubbler-buttons"></div>
+                    ${this.editButton()}${this.closeButton()}${this.ignoreButton()}
                 </div>
             </div>
         `;
@@ -392,7 +400,7 @@ export default class InfoPopup {
         return html`
             <button
                 class="btn-primary"
-                @click=${this.buttonClicked.bind(this)}
+                @click=${this.editClicked.bind(this)}
                 ?disabled=${disabled}
                 ${ref(this.buttonReady.bind(this))}
             >
@@ -406,6 +414,16 @@ export default class InfoPopup {
                 Close
             </button>
         `;
+    }
+    ignoreButton() {
+        if (!this.stats) return '';
+        return this.subject === 'album-title' && this.stats.albumsCount > 1
+            ? html`
+                  <button class="btn-ignore" @click=${this.ignoreClicked.bind(this)}>
+                      Ignore
+                  </button>
+              `
+            : '';
     }
     buttonReady(node?: Element) {
         if (node instanceof HTMLButtonElement) {
@@ -424,11 +442,27 @@ export default class InfoPopup {
         const disabled = count === 0;
         return { disabled };
     }
-    buttonClicked(event: Event) {
+    editClicked(event: Event) {
         if (checkedCount(this.checkedAlbums) > 0) {
             this.dialog.close(event);
             new EditPopup(this.db, this.item, this.subject, this.checkedAlbums).show();
         }
+    }
+    ignoreClicked() {
+        const nativeClass = this.anchor.dataset.nativeClass;
+        if (nativeClass) {
+            addIgnoredSameTitle(this.db, this.item.albumName);
+            this.anchor.classList.replace('disc-green', nativeClass);
+            const lines = this.anchor.title.split('\n');
+            const lastLine = lines[lines.length - 1];
+            if (/^\d+ more album/.test(lastLine)) {
+                lines.pop();
+                this.anchor.title = lines.join('\n');
+            }
+        } else {
+            reloadPage();
+        }
+        this.dialog.close();
     }
     checkCheckbox(artist: string, album: string) {
         return this.checkedAlbums.get(artist)?.has(album);
@@ -460,6 +494,21 @@ export default class InfoPopup {
             : this.stats.trackScrobbles;
         const tracksCountsMap = mapScrobbleCounts(scrobbles, 'track_name', compose);
         return tracksCountsTitle(tracksCountsMap);
+    }
+    async verifyCapitalization() {
+        if (
+            (this.subject === 'track' &&
+                (await hasDivergentTrackCapitalizations(this.item, this.db))) ||
+            (this.subject === 'album' &&
+                (await hasDivergentAlbumCapitalizations(this.item, this.db))) ||
+            (['artist', 'album-title'].includes(this.subject) &&
+                (await hasDivergentAlbumArtistCapitalizations(
+                    this.item.albumArtistName,
+                    this.db,
+                )))
+        ) {
+            await fixCapitalization(this.item, this.db);
+        }
     }
     async getStatistics() {
         if (this.subject === 'track') {

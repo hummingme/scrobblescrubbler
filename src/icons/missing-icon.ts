@@ -6,13 +6,13 @@
 import Icon from './icon.ts';
 import { editScrobbleFormSelector } from '../lib/lastfm-page.ts';
 import fixItem from '../lib/fix-item.ts';
-import { ScrobbleScrubblerDB } from '../services/database.ts';
+import { ScrubblerDB } from '../services/database.ts';
 import type { LibrarySubject } from '../types/lastfm.ts';
 import type { ScrubblerItem } from '../types/scrubbler.ts';
 
 export default class MissingIcon extends Icon {
     subject?: LibrarySubject;
-    constructor(db: ScrobbleScrubblerDB) {
+    constructor(db: ScrubblerDB) {
         super(db);
     }
     async addIcon(target: HTMLElement, item: ScrubblerItem, subject: LibrarySubject) {

@@ -7,7 +7,7 @@ import { dateTimeString } from './format-date.ts';
 import { itemLinkSubject } from './item-links.ts';
 import { editScrobbleFormSelector, getUserUrl } from './lastfm-page.ts';
 import requestDocument from './request-document.ts';
-import { ScrobbleScrubblerDB } from '../services/database.ts';
+import { ScrubblerDB } from '../services/database.ts';
 import { error, log } from '../services/logger.ts';
 import Settings from '../services/settings.ts';
 import type { ScrubblerItem } from '../types/scrubbler.ts';
@@ -16,7 +16,7 @@ import type { ScrubblerItem } from '../types/scrubbler.ts';
  * called by MissingItem.click()
  */
 export default async function fixItem(
-    db: ScrobbleScrubblerDB,
+    db: ScrubblerDB,
     item: ScrubblerItem,
     timestamp?: number,
 ) {

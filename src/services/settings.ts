@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: GPL-3-0-or-later
  */
 
-import { ScrobbleScrubblerDB } from './database.ts';
+import { ScrubblerDB } from './database.ts';
 import { Setting, SettingKey, SettingTypes } from '../types/settings.ts';
 
 type SettingsResult<K extends readonly SettingKey[]> = {
@@ -11,8 +11,8 @@ type SettingsResult<K extends readonly SettingKey[]> = {
 };
 
 export default class Settings {
-    #db: ScrobbleScrubblerDB;
-    constructor(db: ScrobbleScrubblerDB) {
+    #db: ScrubblerDB;
+    constructor(db: ScrubblerDB) {
         this.#db = db;
     }
     set(settings: Setting[]) {

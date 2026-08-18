@@ -7,7 +7,7 @@ import { html } from 'lit-html';
 import { createRef, ref, type Ref } from 'lit/directives/ref.js';
 import md5 from 'blueimp-md5';
 
-import { ScrobbleScrubblerDB } from './database.ts';
+import { ScrubblerDB } from './database.ts';
 import { error, log } from './logger.ts';
 import Settings from './settings.ts';
 import {
@@ -53,7 +53,7 @@ type BaseKey = 'artist_name' | 'track_name' | 'album_artist_name' | 'album_name'
 type OriginalKey<F extends BaseKey> = `${F}_original`;
 
 export default class EditPopup {
-    db: ScrobbleScrubblerDB;
+    db: ScrubblerDB;
     dialog: ModalDialog;
     albumArtistNameInputRef: Ref<HTMLElement> = createRef();
     saveButtonRef: Ref<HTMLElement> = createRef();
@@ -69,7 +69,7 @@ export default class EditPopup {
     automaticEditChecked: boolean = false;
     pageReloadChecked: boolean = false;
     constructor(
-        db: ScrobbleScrubblerDB,
+        db: ScrubblerDB,
         item: ScrubblerItem,
         subject: ScrubblerSubject,
         checkedAlbums: CheckedAlbums,

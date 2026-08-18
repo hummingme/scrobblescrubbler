@@ -1,6 +1,11 @@
+# v1.1.0
+- Released on 2026/08/18
+- Added an 'ignore' button to the Info Popup to not display a green disc icon for albums if there are other albums with the same title.
+- Additional capitalization check and, if necessary, correction when the InfoPopup is called.
+
 # v1.0.2
 - Released on 2026/08/07
-- improved reliability of Pro detection on Chromium-based browsers.
+- Improved reliability of Pro detection on Chromium-based browsers.
 - The scroll position gets restored after page reloads.
 - Removed the Windows key modifier for opening links in a new tab due to limited support.
 - Linked the album and track totals on artist library pages to their respective album and track pages.

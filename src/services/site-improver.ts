@@ -3,12 +3,12 @@
  * SPDX-License-Identifier: GPL-3-0-or-later
  */
 
-import { ScrobbleScrubblerDB } from './database.ts';
+import { ScrubblerDB } from './database.ts';
 import { isLibraryArtistLink } from '../lib/library-links.ts';
 
 export default class SiteImprover {
-    db: ScrobbleScrubblerDB;
-    constructor(db: ScrobbleScrubblerDB) {
+    db: ScrubblerDB;
+    constructor(db: ScrubblerDB) {
         this.db = db;
     }
     process(node: HTMLElement) {

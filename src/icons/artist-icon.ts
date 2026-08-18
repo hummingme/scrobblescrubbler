@@ -5,7 +5,7 @@
 
 import InfoIcon from './info-icon.ts';
 import { getArtistStats } from '../lib/data-queries.ts';
-import { ScrobbleScrubblerDB } from '../services/database.ts';
+import { ScrubblerDB } from '../services/database.ts';
 import InfoPopup from '../services/info-popup.ts';
 import type { ScrubblerItem } from '../types/scrubbler.ts';
 import { isLibraryArtistLink } from '../lib/library-links.ts';
@@ -14,14 +14,18 @@ import { hasDivergentAlbumArtistCapitalizations } from '../lib/fix-capitalizatio
 type ArtistStats = Awaited<ReturnType<typeof getArtistStats>>;
 
 export default class ArtistIcon extends InfoIcon {
-    constructor(db: ScrobbleScrubblerDB) {
+    constructor(db: ScrubblerDB) {
         super(db);
     }
     async addIcon(target: HTMLElement, item: ScrubblerItem) {
         this.item = item;
         const stats: ArtistStats = await getArtistStats(this.db, item);
-        if (stats.scrobblesCount === 0) return;
-        if (await this.checkDivergentCapitalizations(this.item.albumArtistName)) return;
+        if (
+            stats.scrobblesCount === 0 ||
+            (await this.hasDivergentCapitalizations(this.item.albumArtistName))
+        )
+            return;
+
         this.setTitle(stats);
         let added = false;
         if (this.isTargetChartTable(target)) {
@@ -87,7 +91,7 @@ export default class ArtistIcon extends InfoIcon {
         const popup = new InfoPopup(target, this.db, this.item, 'artist');
         popup.show();
     }
-    async checkDivergentCapitalizations(albumArtistName: string) {
+    async hasDivergentCapitalizations(albumArtistName: string) {
         return (
             isLibraryArtistLink(location.href) &&
             (await hasDivergentAlbumArtistCapitalizations(albumArtistName, this.db))

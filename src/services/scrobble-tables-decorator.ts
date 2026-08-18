@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: GPL-3-0-or-later
  */
 
-import { ScrobbleScrubblerDB } from './database.ts';
+import { ScrubblerDB } from './database.ts';
 import Settings from './settings.ts';
 import MissingIcon from '../icons/missing-icon.ts';
 import TrackIcon from '../icons/track-icon.ts';
@@ -26,8 +26,8 @@ import { ScrubblerItem } from '../types/scrubbler.ts';
  *   - library scrobble history, https://www.last.fm/user/iriebob/library?page=2
  */
 export default class ScrobbleTablesDecorator {
-    db: ScrobbleScrubblerDB;
-    constructor(db: ScrobbleScrubblerDB) {
+    db: ScrubblerDB;
+    constructor(db: ScrubblerDB) {
         this.db = db;
     }
     // called by observer for div and section nodes

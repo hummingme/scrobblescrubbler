@@ -4,16 +4,12 @@
  */
 
 import { messageBackground } from './message-background.ts';
-import { ScrobbleScrubblerDB } from '../services/database.ts';
+import { ScrubblerDB } from '../services/database.ts';
 import { log } from '../services/logger.ts';
 import { JobType } from '../types/jobs.ts';
 import { JobsChangedMessage } from '../types/messages.ts';
 
-export async function waitingJobsCount(
-    db: ScrobbleScrubblerDB,
-    type?: JobType,
-    init?: boolean,
-) {
+export async function waitingJobsCount(db: ScrubblerDB, type?: JobType, init?: boolean) {
     return await db.jobs
         .where('state')
         .equals('waiting')
@@ -27,7 +23,7 @@ export async function waitingJobsCount(
 }
 
 let lastJobsCount = 0;
-export async function reportJobsCount(db: ScrobbleScrubblerDB) {
+export async function reportJobsCount(db: ScrubblerDB) {
     const jobsCount = await waitingJobsCount(db);
     if (jobsCount !== lastJobsCount) {
         const message: JobsChangedMessage = { type: 'JOBS_CHANGED', jobsCount };

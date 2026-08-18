@@ -4,15 +4,15 @@
  */
 
 import { emptyScrubblerItem } from '../lib/scrubbler.ts';
-import { ScrobbleScrubblerDB } from '../services/database.ts';
+import { ScrubblerDB } from '../services/database.ts';
 import type { LibrarySubject } from '../types/lastfm.ts';
 import type { ScrubblerItem } from '../types/scrubbler.ts';
 
 export default abstract class Icon {
-    db: ScrobbleScrubblerDB;
+    db: ScrubblerDB;
     node: HTMLButtonElement;
     item: ScrubblerItem = emptyScrubblerItem();
-    constructor(db: ScrobbleScrubblerDB) {
+    constructor(db: ScrubblerDB) {
         this.db = db;
         this.node = document.createElement('button');
     }

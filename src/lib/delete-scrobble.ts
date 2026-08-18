@@ -5,13 +5,13 @@
 
 import { getUserName, getUserUrl } from './lastfm-page.ts';
 import postRequest from './post-request.ts';
-import { openDatabase, ScrobbleScrubblerDB } from '../services/database.ts';
+import { openDatabase, ScrubblerDB } from '../services/database.ts';
 import { log } from '../services/logger.ts';
 import Settings from '../services/settings.ts';
 import type { DeleteFormValues, Scrobble } from '../types/lastfm.ts';
 import type { DeleteScrobbleJob } from '../types/jobs.ts';
 
-export async function deleteScrobble(job: DeleteScrobbleJob, db: ScrobbleScrubblerDB) {
+export async function deleteScrobble(job: DeleteScrobbleJob, db: ScrubblerDB) {
     const url = `${getUserUrl()}/library/delete`;
     const { csrfmiddlewaretoken } = await new Settings(db).get(['csrfmiddlewaretoken']);
     const data = job.data;
@@ -38,7 +38,7 @@ export async function externalDeleteScrobble(data: DeleteFormValues) {
     await deleteScrobbleData(data, db);
 }
 
-async function deleteScrobbleData(data: DeleteFormValues, db: ScrobbleScrubblerDB) {
+async function deleteScrobbleData(data: DeleteFormValues, db: ScrubblerDB) {
     const count = await db.scrobbles
         .where('track_name')
         .equalsIgnoreCase(data.track_name)

@@ -3,13 +3,14 @@
  * SPDX-License-Identifier: GPL-3-0-or-later
  */
 
-import { ScrobbleScrubblerDB } from '../services/database.ts';
+import { ScrubblerDB } from '../services/database.ts';
+import { log } from '../services/logger.ts';
 import type { Scrobble } from '../types/lastfm.ts';
 import type { ScrubblerItem } from '../types/scrubbler.ts';
 
 export async function fixCapitalization(
     item: ScrubblerItem,
-    db: ScrobbleScrubblerDB,
+    db: ScrubblerDB,
 ): Promise<boolean> {
     const { artistName, trackName, albumName, albumArtistName } = item;
     const counts: Record<string, number> = {};
@@ -33,10 +34,14 @@ export async function fixCapitalization(
             }
         }
     }
-    return Object.entries(counts).filter((entry) => entry[1] > 0).length > 0;
+    const result = Object.entries(counts).filter((entry) => entry[1] > 0).length > 0;
+    if (result) {
+        log('fixCapitalization fixed', { item, counts });
+    }
+    return result;
 }
 
-async function fixArtistName(item: ScrubblerItem, db: ScrobbleScrubblerDB) {
+async function fixArtistName(item: ScrubblerItem, db: ScrubblerDB) {
     const { artistName } = item;
     return await db.scrobbles
         .where('artist_name')
@@ -51,7 +56,7 @@ async function fixArtistName(item: ScrubblerItem, db: ScrobbleScrubblerDB) {
         .modify({ artist_name: artistName });
 }
 
-async function fixTrackName(item: ScrubblerItem, db: ScrobbleScrubblerDB) {
+async function fixTrackName(item: ScrubblerItem, db: ScrubblerDB) {
     const { artistName, trackName } = item;
     return await db.scrobbles
         .where('track_name')
@@ -64,7 +69,7 @@ async function fixTrackName(item: ScrubblerItem, db: ScrobbleScrubblerDB) {
         .modify({ track_name: trackName });
 }
 
-async function fixAlbumName(item: ScrubblerItem, db: ScrobbleScrubblerDB) {
+async function fixAlbumName(item: ScrubblerItem, db: ScrubblerDB) {
     const { albumName, albumArtistName } = item;
     return await db.scrobbles
         .where('album_name')
@@ -78,24 +83,34 @@ async function fixAlbumName(item: ScrubblerItem, db: ScrobbleScrubblerDB) {
         .modify({ album_name: albumName });
 }
 
-async function fixAlbumArtistName(item: ScrubblerItem, db: ScrobbleScrubblerDB) {
+async function fixAlbumArtistName(item: ScrubblerItem, db: ScrubblerDB) {
     const { albumName, albumArtistName } = item;
-    return await db.scrobbles
-        .where('album_name')
-        .equals(albumName)
-        .and((scrobble) => {
-            return (
-                scrobble.album_artist_name !== albumArtistName &&
-                String(scrobble.album_artist_name).toLowerCase() ===
-                    albumArtistName.toLowerCase()
-            );
-        })
-        .modify({ album_artist_name: albumArtistName });
+    if (albumName) {
+        return await db.scrobbles
+            .where('album_name')
+            .equals(albumName)
+            .and((scrobble) => {
+                return (
+                    scrobble.album_artist_name !== albumArtistName &&
+                    String(scrobble.album_artist_name).toLowerCase() ===
+                        albumArtistName.toLowerCase()
+                );
+            })
+            .modify({ album_artist_name: albumArtistName });
+    } else {
+        return await db.scrobbles
+            .where('album_artist_name')
+            .equalsIgnoreCase(albumArtistName)
+            .and((scrobble) => {
+                return scrobble.album_artist_name !== albumArtistName;
+            })
+            .modify({ album_artist_name: albumArtistName });
+    }
 }
 
 export async function hasDivergentAlbumCapitalizations(
     item: ScrubblerItem,
-    db: ScrobbleScrubblerDB,
+    db: ScrubblerDB,
 ) {
     const divergent = await db.scrobbles
         .where('album_name')
@@ -112,7 +127,7 @@ export async function hasDivergentAlbumCapitalizations(
 
 export async function hasDivergentAlbumArtistCapitalizations(
     albumArtistName: string,
-    db: ScrobbleScrubblerDB,
+    db: ScrubblerDB,
 ) {
     const divergentAlbumArtistName = Boolean(
         await db.scrobbles
@@ -129,4 +144,21 @@ export async function hasDivergentAlbumArtistCapitalizations(
             .count(),
     );
     return divergentAlbumArtistName || divergentArtistName;
+}
+
+export async function hasDivergentTrackCapitalizations(
+    item: ScrubblerItem,
+    db: ScrubblerDB,
+) {
+    const divergentTrackName = await db.scrobbles
+        .where('track_name')
+        .equalsIgnoreCase(item.trackName)
+        .and((scrobble: Scrobble) => {
+            return (
+                scrobble.artist_name === item.artistName &&
+                scrobble.track_name !== item.trackName
+            );
+        })
+        .count();
+    return Boolean(divergentTrackName);
 }

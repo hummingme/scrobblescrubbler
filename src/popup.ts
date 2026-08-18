@@ -97,11 +97,13 @@ function view(state: StatePayload) {
     const editsToGo = state.editsCount - state.editsFetched;
     const jobsLabel = html`
         process jobs -
-        ${state.processJobs
-            ? html`
-                  ${running}${remaining}
-              `
-            : stopped}
+        ${
+            state.processJobs
+                ? html`
+                      ${running}${remaining}
+                  `
+                : stopped
+        }
     `;
     return html`
         ${headline()}
@@ -119,9 +121,11 @@ function view(state: StatePayload) {
                 <p class="indent">${pendingInfo(state)}</p>
                 <p class="indent" title="${deltaText(scrobblesToGo)}">
                     ${state.scrobblesFetched} scrobbles fetched
-                    ${state.initState === 'running'
-                        ? `(${deltaText(scrobblesToGo)})`
-                        : ''}
+                    ${
+                        state.initState === 'running'
+                            ? `(${deltaText(scrobblesToGo)})`
+                            : ''
+                    }
                 </p>
                 <p class="indent" title="${deltaText(editsToGo)}">
                     ${state.editsFetched} edits fetched
@@ -171,7 +175,7 @@ function headline() {
                 <a
                     class="github-readme"
                     href="https://github.com/hummingme/scrobblescrubbler#%EF%B8%8F-usage"
-                    title="read the documetation on github"
+                    title="read the documentation on github"
                     target="_blank"
                 ></a>
             </div>

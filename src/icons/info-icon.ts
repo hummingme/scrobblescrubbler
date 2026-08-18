@@ -4,11 +4,11 @@
  */
 
 import Icon from './icon.ts';
-import { ScrobbleScrubblerDB } from '../services/database.ts';
+import { ScrubblerDB } from '../services/database.ts';
 
 export default abstract class InfoIcon extends Icon {
     boundClick;
-    constructor(db: ScrobbleScrubblerDB) {
+    constructor(db: ScrubblerDB) {
         super(db);
         this.boundClick = this.click.bind(this);
     }

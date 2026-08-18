@@ -5,7 +5,7 @@
 
 import { html, type TemplateResult } from 'lit-html';
 
-import { openDatabase, ScrobbleScrubblerDB } from './database.ts';
+import { openDatabase, ScrubblerDB } from './database.ts';
 import { error, log } from './logger.ts';
 import ScrobblesFetcher from './scrobbles-fetcher.ts';
 import {
@@ -33,10 +33,10 @@ type ScrobbleModifications = {
 type ScrobbleCounts = { [Property in keyof Scrobble]?: number };
 
 export default class ScrobbleChecker {
-    db: ScrobbleScrubblerDB;
+    db: ScrubblerDB;
     scrobblesFetcher: ScrobblesFetcher;
     dialog?: ModalDialog;
-    constructor(db: ScrobbleScrubblerDB, scrobblesFetcher: ScrobblesFetcher) {
+    constructor(db: ScrubblerDB, scrobblesFetcher: ScrobblesFetcher) {
         this.db = db;
         this.scrobblesFetcher = scrobblesFetcher;
     }
@@ -306,9 +306,10 @@ export default class ScrobbleChecker {
             }
             case 'artist_name':
                 return libraryArtistLink(scrobble.artist_name);
-            case 'album_artist_name':
+            case 'album_artist_name': {
                 const artistName = scrobble.album_artist_name || scrobble.artist_name;
                 return libraryArtistLink(artistName);
+            }
         }
     }
     showRefetchDialog(timestamp: number, page: number) {
@@ -356,7 +357,6 @@ export default class ScrobbleChecker {
         const db = await openDatabase(userName);
         Object.entries(modifications).forEach(async ([property, entry]) => {
             const { stored, existing } = entry;
-            console.log('property, stored, existing: ', property, stored, existing);
             if (property === 'artist_name') {
                 await db.scrobbles
                     .where('artist_name')

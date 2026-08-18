@@ -5,13 +5,13 @@
 
 import { getUserName } from './lastfm-page.ts';
 import postRequest from './post-request.ts';
-import { openDatabase, ScrobbleScrubblerDB } from '../services/database.ts';
+import { openDatabase, ScrubblerDB } from '../services/database.ts';
 import EditsFetcher from '../services/edits-fetcher.ts';
 import Settings from '../services/settings.ts';
 import { DeleteTrackEditFormValues } from '../types/lastfm.ts';
 import type { DeleteEditJob } from '../types/jobs.ts';
 
-export async function deleteTrackedit(job: DeleteEditJob, db: ScrobbleScrubblerDB) {
+export async function deleteTrackedit(job: DeleteEditJob, db: ScrubblerDB) {
     const url = 'https://www.last.fm/settings/subscription/automatic-edits/tracks?page=1';
     const { csrfmiddlewaretoken } = await new Settings(db).get(['csrfmiddlewaretoken']);
     const row = await db.edits.where('hash').equals(job.data.hash).first();
@@ -46,7 +46,7 @@ export async function externalDeleteTrackedit(data: DeleteTrackEditFormValues) {
     await deleteTrackeditData(hash, db);
 }
 
-async function deleteTrackeditData(hash: string, db: ScrobbleScrubblerDB) {
+async function deleteTrackeditData(hash: string, db: ScrubblerDB) {
     await db
         .transaction('rw', db.edits, db.settings, async () => {
             await db.edits.delete(hash);

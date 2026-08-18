@@ -5,16 +5,16 @@
 
 import { html } from 'lit-html';
 
-import { ScrobbleScrubblerDB } from './database.ts';
+import { ScrubblerDB } from './database.ts';
 import { warn } from './logger.ts';
 import ScrobblesFetcher from './scrobbles-fetcher.ts';
 import { formatDate } from '../lib/format-date.ts';
 import ModalDialog from '../lib/modal-dialog.ts';
 
 export default class ScrobblesRefetcher {
-    db: ScrobbleScrubblerDB;
+    db: ScrubblerDB;
     dialog?: ModalDialog;
-    constructor(db: ScrobbleScrubblerDB) {
+    constructor(db: ScrubblerDB) {
         this.db = db;
     }
     checkInvocation() {
@@ -77,12 +77,14 @@ export default class ScrobblesRefetcher {
         this.dialog = new ModalDialog();
         const timeframe = html`
             <b>${start}</b>
-            ${end !== start
-                ? html`
-                      to
-                      <b>${end}</b>
-                  `
-                : ''}
+            ${
+                end !== start
+                    ? html`
+                          to
+                          <b>${end}</b>
+                      `
+                    : ''
+            }
         `;
         const message = html`
             <h2>ScrobbleScrubbler got a refetch request</h2>

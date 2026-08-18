@@ -251,12 +251,32 @@ div.scrobble-scrubbler-scrobble-edit {
 }
 
 div.scrobble-scrubbler-buttons {
+    display: flex;
     grid-column: 1 / 4;
-    button {
-        margin: 1.5em 0 0.5em;
+    gap: 1em;
+    margin: 1.5em 0 0.5em;
+    button:last-child {
+        margin-left: auto;
     }
-    button:not(:first-of-type) {
-        margin-left: 1em;
+    button.btn-ignore {
+        color: green;
+        background-color: lightgreen;
+        display: inline-block;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.4px;
+        line-height: 21px;
+        min-height: 40px;
+        min-width: 80px;
+        text-align: center;
+        text-transform: uppercase;
+        vertical-align: middle;
+        border-radius: 3px;
+        padding: 9px 20px 10px;
+        transition: background-color;
+    }
+    button.btn-ignore:hover {
+        background-color: #92d212;
     }
 }
 

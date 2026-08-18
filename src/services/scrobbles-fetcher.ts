@@ -5,7 +5,7 @@
 
 import md5 from 'blueimp-md5';
 
-import { ScrobbleScrubblerDB } from './database.ts';
+import { ScrubblerDB } from './database.ts';
 import { error, log } from './logger.ts';
 import Settings from './settings.ts';
 import { formatDate } from '../lib/format-date.ts';
@@ -21,11 +21,11 @@ import { Loved, Scrobble } from '../types/lastfm.ts';
 
 export default class ScrobblesFetcher {
     userName: string;
-    db: ScrobbleScrubblerDB;
+    db: ScrubblerDB;
     settings;
     checkFrequency = 600033 as const; // 10 min
     checkInterval?: number;
-    constructor(db: ScrobbleScrubblerDB) {
+    constructor(db: ScrubblerDB) {
         this.db = db;
         this.userName = getUserName();
         this.settings = new Settings(db);

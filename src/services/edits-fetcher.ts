@@ -9,7 +9,7 @@ import { error, log } from './logger.ts';
 import Settings from './settings.ts';
 import { reportJobsCount, waitingJobsCount } from '../lib/jobs-count.ts';
 import requestDocument from '../lib/request-document.ts';
-import { ScrobbleScrubblerDB } from '../services/database.ts';
+import { ScrubblerDB } from '../services/database.ts';
 import type { FetchTrackeditsJob } from '../types/jobs.ts';
 import {
     deleteTrackEditFormKeys,
@@ -19,11 +19,11 @@ import {
 } from '../types/lastfm.ts';
 
 export default class EditsFetcher {
-    db: ScrobbleScrubblerDB;
+    db: ScrubblerDB;
     settings;
     checkFrequency = 1200107 as const; // 20 min
     checkInterval?: number;
-    constructor(db: ScrobbleScrubblerDB) {
+    constructor(db: ScrubblerDB) {
         this.db = db;
         this.settings = new Settings(db);
     }

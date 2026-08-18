@@ -4,12 +4,12 @@
  */
 
 import type { ArtistAlbums } from './checked-albums.ts';
-import { ScrobbleScrubblerDB } from '../services/database.ts';
+import { ScrubblerDB } from '../services/database.ts';
 import type { Scrobble } from '../types/lastfm.ts';
 import type { ScrubblerItem } from '../types/scrubbler.ts';
 
 export async function getTrackScrobbles(
-    db: ScrobbleScrubblerDB,
+    db: ScrubblerDB,
     item: ScrubblerItem,
     timestamp?: number,
 ): Promise<Scrobble[]> {
@@ -26,7 +26,7 @@ export async function getTrackScrobbles(
 }
 
 async function getAlbumScrobbles(
-    db: ScrobbleScrubblerDB,
+    db: ScrubblerDB,
     item: ScrubblerItem,
 ): Promise<Scrobble[]> {
     return await db.scrobbles
@@ -37,7 +37,7 @@ async function getAlbumScrobbles(
 }
 
 export async function getCheckedTrackScrobbles(
-    db: ScrobbleScrubblerDB,
+    db: ScrubblerDB,
     item: Pick<ScrubblerItem, 'artistName' | 'trackName'>,
     albums: ArtistAlbums,
 ) {
@@ -51,7 +51,7 @@ export async function getCheckedTrackScrobbles(
 }
 
 export async function getCheckedAlbumScrobbles(
-    db: ScrobbleScrubblerDB,
+    db: ScrubblerDB,
     item: ScrubblerItem,
     albums: ArtistAlbums,
 ) {
@@ -75,7 +75,7 @@ export async function getCheckedAlbumScrobbles(
 }
 
 export async function getCheckedArtistScrobbles(
-    db: ScrobbleScrubblerDB,
+    db: ScrubblerDB,
     item: ScrubblerItem,
     albums: ArtistAlbums,
 ) {
@@ -88,7 +88,7 @@ export async function getCheckedArtistScrobbles(
 }
 
 export async function getCheckedAlbumTitleScrobbles(
-    db: ScrobbleScrubblerDB,
+    db: ScrubblerDB,
     item: ScrubblerItem,
     albums: ArtistAlbums,
 ) {
@@ -110,7 +110,7 @@ function checkedAlbumsFilter(albums: ArtistAlbums) {
     };
 }
 
-export async function getTrackStats(db: ScrobbleScrubblerDB, item: ScrubblerItem) {
+export async function getTrackStats(db: ScrubblerDB, item: ScrubblerItem) {
     const scrobbles = await getTrackScrobbles(db, item);
     const artistsAlbums = new Set(
         scrobbles.map(
@@ -131,7 +131,7 @@ export async function getTrackStats(db: ScrobbleScrubblerDB, item: ScrubblerItem
     };
 }
 
-export async function getAlbumStats(db: ScrobbleScrubblerDB, item: ScrubblerItem) {
+export async function getAlbumStats(db: ScrubblerDB, item: ScrubblerItem) {
     const { albumName, albumArtistName } = item;
     const scrobbles = await getAlbumScrobbles(db, item);
     const artistsTracks = scrobbleTracks(scrobbles);
@@ -189,7 +189,7 @@ export async function getAlbumStats(db: ScrobbleScrubblerDB, item: ScrubblerItem
     };
 }
 
-export async function getAlbumTitleStats(db: ScrobbleScrubblerDB, item: ScrubblerItem) {
+export async function getAlbumTitleStats(db: ScrubblerDB, item: ScrubblerItem) {
     const scrobbles: Scrobble[] = await db.scrobbles
         .where('album_name')
         .equalsIgnoreCase(item.albumName)
@@ -204,7 +204,7 @@ export async function getAlbumTitleStats(db: ScrobbleScrubblerDB, item: Scrubble
     };
 }
 
-export async function getArtistStats(db: ScrobbleScrubblerDB, item: ScrubblerItem) {
+export async function getArtistStats(db: ScrubblerDB, item: ScrubblerItem) {
     const albumArtistName = item.albumArtistName;
     const scrobbles: Scrobble[] = await db.scrobbles
         .where('artist_name')
@@ -243,10 +243,7 @@ export async function getArtistStats(db: ScrobbleScrubblerDB, item: ScrubblerIte
     };
 }
 
-async function getScrobblesTracksScrobbles(
-    db: ScrobbleScrubblerDB,
-    scrobbles: Scrobble[],
-) {
+async function getScrobblesTracksScrobbles(db: ScrubblerDB, scrobbles: Scrobble[]) {
     const tracks = scrobbleTracks(scrobbles);
     const trackNames = tracks.map((track) => track.track);
     return await db.scrobbles
@@ -335,7 +332,7 @@ function scrobbleTracks(scrobbles: Scrobble[]): { artist: string; track: string 
 }
 
 export async function artistScrobblesCount(
-    db: ScrobbleScrubblerDB,
+    db: ScrubblerDB,
     artistName: string,
 ): Promise<number> {
     return (await db.scrobbles.where('artist_name').equals(artistName).primaryKeys())
@@ -343,7 +340,7 @@ export async function artistScrobblesCount(
 }
 
 export async function trackScrobblesCount(
-    db: ScrobbleScrubblerDB,
+    db: ScrubblerDB,
     artistName: string,
     trackName: string,
 ): Promise<number> {
@@ -357,7 +354,7 @@ export async function trackScrobblesCount(
 }
 
 export async function albumScrobblesCount(
-    db: ScrobbleScrubblerDB,
+    db: ScrubblerDB,
     albumArtistName: string,
     albumName: string,
 ): Promise<number> {
@@ -371,7 +368,7 @@ export async function albumScrobblesCount(
 }
 
 export async function albumArtistScrobblesCount(
-    db: ScrobbleScrubblerDB,
+    db: ScrubblerDB,
     albumArtistName: string,
 ): Promise<number> {
     return (

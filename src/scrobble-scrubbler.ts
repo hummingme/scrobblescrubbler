@@ -15,7 +15,7 @@ import { isUserUrl } from './lib/library-links.ts';
 import { messageBackground } from './lib/message-background.ts';
 import popupState from './lib/popup-state.ts';
 import { namespace } from './lib/runtime.ts';
-import { openDatabase, ScrobbleScrubblerDB } from './services/database.ts';
+import { openDatabase, ScrubblerDB } from './services/database.ts';
 import EditsFetcher from './services/edits-fetcher.ts';
 import ChartTablesDecorator from './services/chart-table-decorator.ts';
 import HeaderDecorator from './services/header-decorator.ts';
@@ -185,7 +185,7 @@ async function determineCsrfMiddlewareToken(settings: Settings) {
     settings.set([{ name: 'csrfmiddlewaretoken', value: token }]);
 }
 
-async function startObserver(db: ScrobbleScrubblerDB) {
+async function startObserver(db: ScrubblerDB) {
     const chartTablesDecorator = new ChartTablesDecorator(db);
     const scrobbleTablesDecorator = new ScrobbleTablesDecorator(db);
     const headerDecorator = new HeaderDecorator(db);
@@ -248,7 +248,7 @@ function createObserver(
 
 // determine the scrobbles and edits counts while waiting for the initialization to start
 async function waitingActivities(
-    db: ScrobbleScrubblerDB,
+    db: ScrubblerDB,
     scrobblesFetcher: ScrobblesFetcher,
     editsFetcher: EditsFetcher,
 ) {

@@ -5,27 +5,27 @@
 
 import InfoIcon from './info-icon.ts';
 import { getTrackStats } from '../lib/data-queries.ts';
+import { hasDivergentTrackCapitalizations } from '../lib/fix-capitalization.ts';
 import {
     editScrobbleFormSelector,
     getScrubblerItemFromEditForm,
 } from '../lib/lastfm-page.ts';
-import { ScrobbleScrubblerDB } from '../services/database.ts';
+import { ScrubblerDB } from '../services/database.ts';
 import InfoPopup from '../services/info-popup.ts';
 import type { ScrubblerItem } from '../types/scrubbler.ts';
-import { isLibraryTrackLink, isLibraryUrl } from '../lib/library-links.ts';
 
 type TrackStats = Awaited<ReturnType<typeof getTrackStats>>;
 
 export default class TrackIcon extends InfoIcon {
-    constructor(db: ScrobbleScrubblerDB) {
+    constructor(db: ScrubblerDB) {
         super(db);
     }
     async addIcon(target: HTMLElement, item: ScrubblerItem) {
         this.item = item;
         const stats: TrackStats = await getTrackStats(this.db, item);
         if (
-            stats.scrobblesCount === 0 &&
-            (!isLibraryUrl(location.href) || isLibraryTrackLink(location.href))
+            stats.scrobblesCount === 0 ||
+            (await hasDivergentTrackCapitalizations(item, this.db))
         )
             return;
 

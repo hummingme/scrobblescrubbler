@@ -18,19 +18,20 @@ export async function openDatabase(userName: string) {
     if (userName.length === 0) {
         throw Error('[ScrobbleScrubbler] Cannot open database, username is empty!');
     }
-    const db = new ScrobbleScrubblerDB(`scrobble-scrubbler.${userName}`);
+    const db = new ScrubblerDB(`scrobble-scrubbler.${userName}`);
     await db.open().catch((err) => {
         throw Error('Failed to open db: ' + (err.stack || err));
     });
     return db;
 }
 
-export class ScrobbleScrubblerDB extends Dexie {
+export class ScrubblerDB extends Dexie {
     edits!: Table<TrackEdit, string>;
     jobs!: Table<Job, number>;
     loved!: Table<Loved, [string, string]>;
     scrobbles!: Table<Scrobble, [number, number]>;
     settings!: Table<Setting, string>;
+    ignored_same_title!: Table<{ album_name: string }, string>;
     constructor(dbName: string) {
         super(dbName);
 
@@ -41,13 +42,14 @@ export class ScrobbleScrubblerDB extends Dexie {
             .filter((field) => field !== 'timestamp')
             .join(',');
 
-        this.version(1).stores({
+        this.version(2).stores({
             settings: 'name',
             jobs: '++id,job,state,hash',
             edits: `hash,position,${trackeditsIndexes}`,
             trackedits: null,
             scrobbles: `[timestamp+sequence],timestamp,sequence,${scrobblesIndexes}`,
             loved: '[artist_name+track_name], track_name',
+            ignored_same_title: 'album_name',
         });
 
         this.on('populate', function (tx) {

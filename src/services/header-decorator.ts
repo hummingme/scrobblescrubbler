@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: GPL-3-0-or-later
  */
 
-import { ScrobbleScrubblerDB } from './database.ts';
+import { ScrubblerDB } from './database.ts';
 import Settings from './settings.ts';
 import AlbumIcon from '../icons/album-icon.ts';
 import ArtistIcon from '../icons/artist-icon.ts';
@@ -25,14 +25,14 @@ import type { ScrubblerItem } from '../types/scrubbler.ts';
  *   - artist track library pages, https://www.last.fm/user/iriebob/library/music/Lambchop/_/The+Saturday+Option
  */
 export default class HeaderDecorator {
-    db: ScrobbleScrubblerDB;
+    db: ScrubblerDB;
     pageSubject?: LibrarySubject = 'artist';
     albumArtistName: string = '';
     albumName: string = '';
     item: ScrubblerItem = emptyScrubblerItem();
     stats: any;
     icon: AlbumIcon | null = null;
-    constructor(db: ScrobbleScrubblerDB) {
+    constructor(db: ScrubblerDB) {
         this.db = db;
     }
     // called by observer for div nodes

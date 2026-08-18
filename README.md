@@ -13,15 +13,6 @@ Have you ever wished for a Last.fm that instantly displays your scrobble counts 
 
 Please read the [Usage](#%EF%B8%8F-usage) section for details.
 
-## 💀 Warning
-First, by maintaining its own database, ScrobbleScrubbler violates the good practice of the [_&bdquo;Single Source of Truth"_](https://en.wikipedia.org/wiki/Single_source_of_truth). Last.fm is always correct, and there are many reasons why the extensions database can fall behind and display incomplete or incorrect data. The main reason for this is when scrobbles are edited in a different browser.
-
-Second, ScrobbleScrubbler is deeply interweaved with the Last.fm website. Any minor change to the site by the Last.fm team can (and most likely will) cause the extension to break completely.
-
-Third, the extension is developed exclusively using my own Last.fm library as a training ground, and I discovered and solved **many** edge cases along the way. However, it is to be expected that some of your edge cases were overlooked.
-
-On the good news, I've been using ScrobbbleScrubbler for more than half a year now and it has absolutely changed my life for the better ☺️.
-
 ## 🛸 Installation 
 Please download and install the extension from the [Chrome Web Store](https://chromewebstore.google.com/detail/scrobblescrubbler/aagaghbcjcfmaplbckmjphchmbgbpblh) for Chrome and Chromium based browsers such as Edge, Brave, and Opera, and from the [Firefox Addons Page](https://addons.mozilla.org/en-US/firefox/addon/scrobblescrubbler) for Firefox.
 
@@ -61,9 +52,13 @@ A grey/black icon indicates that all scrobbles of a track come from one album. A
 
 If the discs are located next to an album or artist, the colors refer accordingly to the scobbles for the tracks of the album or artist.
 
-Additionally, a green disc icon may appear next to an album, indicating that there are multiple albums with the same title. <kbd>Ctrl</kbd>-Click on the green disc opens a list where you can select which albums you want to edit together.
+Additionally, a green disc icon may appear next to an album, indicating that there are multiple albums with the same title. <kbd>Ctrl</kbd>-Click on the green disc opens a list where you can select which albums you want to edit together. This is extremely helpful for correcting Various Artists albums whose tracks were incorrectly scrobbled under the individual artists. Below the list, there is also a green 'ignore' button; click this if you no longer want the album title in question to be marked with the green disc icon.
 
-Rarely, a pink/violet disc with a question mark may appear if the extension database doesn't have matching information for a track, album, or artist. In that case, a repair attempt can be started with <kbd>Ctrl</kbd>-Click.
+<p align="center">
+    <img src="assets/album-green-icon.png" alt="green icon, indicating more albums with the same title" />
+</p>
+
+Rarely, a pink/violet disc with a question mark may appear if the extension database doesn't have matching information for a track, album, or artist. Usually, this simply means that a new artist, album, or track has just been scrobbled for the first time and that this scrobble hasn't been processed yet. Otherwise, if the data relates to old scrobbles, a repair attempt can be started with <kbd>Ctrl</kbd>-Click.
 
 ### The Info Popup
 The dialog opens after clicking on a disc icon and displays a list of the albums on which the track, album or artist scrobbles are distributed. The list is divided into album artist sections and may have a line for scrobbles  without album data. Hovering the scrobble numbers with the mouse lists the track titles.
@@ -128,6 +123,15 @@ However, if you ever have a reason to re-fetch the scrobble data for a specific 
 <p>`https://www.last.fm/home?refetch=2026-01-15`</p>
 <p>`https://www.last.fm/home?refetch=2025-12`</p>
 <p>`https://www.last.fm/home?refetch=2010`</p>
+
+## 💀 Warning
+First, by maintaining its own database, ScrobbleScrubbler violates the good practice of the [_&bdquo;Single Source of Truth"_](https://en.wikipedia.org/wiki/Single_source_of_truth). Last.fm is always correct, and there are many reasons why the extensions database can fall behind and display incomplete or incorrect data. The main reason for this is when scrobbles are edited in a different browser.
+
+Second, ScrobbleScrubbler is deeply interweaved with the Last.fm website. Any minor change to the site by the Last.fm team can (and most likely will) cause the extension to break completely.
+
+Third, the extension is developed exclusively using my own Last.fm library as a training ground, and I discovered and solved **many** edge cases along the way. However, it is to be expected that some of your edge cases were overlooked.
+
+On the good news, I've been using ScrobbbleScrubbler for more than half a year now and it has absolutely changed my life for the better ☺️.
 
 ## 🎓 Frequently Asked Questions
 

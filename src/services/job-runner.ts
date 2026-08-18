@@ -5,7 +5,7 @@
 
 import { type Table } from 'dexie';
 
-import { ScrobbleScrubblerDB } from './database.ts';
+import { ScrubblerDB } from './database.ts';
 import EditsFetcher from './edits-fetcher.ts';
 import ScrobblesFetcher from './scrobbles-fetcher.ts';
 import { deleteTrackedit } from '../lib/delete-trackedit.ts';
@@ -24,7 +24,7 @@ import type { ReloadTabMessage } from '../types/messages.ts';
 export default class JobRunner {
     scrobblesFetcher: ScrobblesFetcher;
     editsFetcher: EditsFetcher;
-    db: ScrobbleScrubblerDB;
+    db: ScrubblerDB;
     runningFrequency = 5031;
     runnerInterval?: number;
     initializing = false;
@@ -33,7 +33,7 @@ export default class JobRunner {
     constructor(
         scrobblesFetcher: ScrobblesFetcher,
         editsFetcher: EditsFetcher,
-        db: ScrobbleScrubblerDB,
+        db: ScrubblerDB,
     ) {
         this.scrobblesFetcher = scrobblesFetcher;
         this.editsFetcher = editsFetcher;

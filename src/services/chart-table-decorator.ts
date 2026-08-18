@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: GPL-3-0-or-later
  */
 
-import { ScrobbleScrubblerDB } from './database.ts';
+import { ScrubblerDB } from './database.ts';
 import Settings from './settings.ts';
 import AlbumIcon from '../icons/album-icon.ts';
 import ArtistIcon from '../icons/artist-icon.ts';
@@ -32,8 +32,8 @@ import type { ScrubblerItem } from '../types/scrubbler.ts';
  *   - user library pages for tables of albums and tracks
  */
 export default class ChartTablesDecorator {
-    db: ScrobbleScrubblerDB;
-    constructor(db: ScrobbleScrubblerDB) {
+    db: ScrubblerDB;
+    constructor(db: ScrubblerDB) {
         this.db = db;
     }
     // called by observer

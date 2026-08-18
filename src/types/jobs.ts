@@ -7,11 +7,7 @@ import { EditFormData } from '../services/edit-popup.ts';
 import { DeleteFormValues } from '../types/lastfm.ts';
 
 export type JobType =
-    | 'getScrobbles'
-    | 'getTrackedits'
-    | 'editScrobble'
-    | 'deleteEdit'
-    | 'deleteScrobble';
+    'getScrobbles' | 'getTrackedits' | 'editScrobble' | 'deleteEdit' | 'deleteScrobble';
 
 export type JobState = 'waiting' | 'running' | 'done' | 'failed';
 

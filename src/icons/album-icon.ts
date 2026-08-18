@@ -6,29 +6,31 @@
 import InfoIcon from './info-icon.ts';
 import { getAlbumStats } from '../lib/data-queries.ts';
 import { hasDivergentAlbumCapitalizations } from '../lib/fix-capitalization.ts';
+import { isIgnoredSameTitle } from '../lib/ignored-same-title.ts';
 import { emptyScrubblerItem } from '../lib/scrubbler.ts';
-import { ScrobbleScrubblerDB } from '../services/database.ts';
+import { ScrubblerDB } from '../services/database.ts';
 import InfoPopup from '../services/info-popup.ts';
-import type { ScrubblerItem } from '../types/scrubbler.ts';
+import { ScrubblerItem } from '../types/scrubbler.ts';
 
 type AlbumStats = Awaited<ReturnType<typeof getAlbumStats>>;
 
 export default class AlbumIcon extends InfoIcon {
-    constructor(db: ScrobbleScrubblerDB) {
+    constructor(db: ScrubblerDB) {
         super(db);
     }
     async addIcon(target: HTMLElement, item: ScrubblerItem) {
         this.item = item;
         const stats: AlbumStats = await getAlbumStats(this.db, item);
-        if (stats.scrobbelsCount === 0) return;
         if (
-            stats.albumTitleAlbumsCount > 1 &&
-            (await hasDivergentAlbumCapitalizations(item, this.db))
+            stats.scrobbelsCount === 0 ||
+            (stats.albumTitleAlbumsCount > 1 &&
+                (await hasDivergentAlbumCapitalizations(item, this.db)))
         ) {
             // force calling fixCapitalization() in the decorator
             return;
         }
         this.setTitle(stats);
+        this.setDataAttributes(stats);
         let added = false;
         if (this.isTargetChartTable(target)) {
             this.setStyles(stats, 'chart');
@@ -42,17 +44,34 @@ export default class AlbumIcon extends InfoIcon {
         }
         return this.node;
     }
-    setStyles(stats: AlbumStats, dest: 'chart' | 'header') {
-        const { albumlessCount, albumTitleAlbumsCount, otherAlbumsTracksCount } = stats;
-        let iconClass = 'disc-grey';
-        if (albumlessCount > 0) {
-            iconClass = 'disc-red';
-        } else if (albumTitleAlbumsCount > 1) {
-            iconClass = 'disc-green';
-        } else if (otherAlbumsTracksCount > 0) {
-            iconClass = 'disc-blue';
-        }
+    async setStyles(stats: AlbumStats, dest: 'chart' | 'header') {
+        const iconClass = await this.resolveDiscClass(stats);
         this.addIconClasses(iconClass, dest);
+    }
+    async setDataAttributes(stats: AlbumStats) {
+        if (
+            stats.albumTitleAlbumsCount > 1 &&
+            !(await isIgnoredSameTitle(this.db, this.item.albumName))
+        ) {
+            this.node.dataset.nativeClass = await this.resolveDiscClass(stats, false);
+        }
+    }
+    async resolveDiscClass(stats: AlbumStats, includeGreen = true): Promise<string> {
+        const { albumlessCount, albumTitleAlbumsCount, otherAlbumsTracksCount } = stats;
+        if (albumlessCount > 0) {
+            return 'disc-red';
+        }
+        if (
+            includeGreen &&
+            albumTitleAlbumsCount > 1 &&
+            !(await isIgnoredSameTitle(this.db, this.item.albumName))
+        ) {
+            return 'disc-green';
+        }
+        if (otherAlbumsTracksCount > 0) {
+            return 'disc-blue';
+        }
+        return 'disc-grey';
     }
     /**
      * - 1 solitary album scrobble

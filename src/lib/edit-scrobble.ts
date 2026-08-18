@@ -5,7 +5,7 @@
 
 import { getUserUrl, getUserName } from './lastfm-page.ts';
 import postRequest from './post-request.ts';
-import { openDatabase, ScrobbleScrubblerDB } from '../services/database.ts';
+import { openDatabase, ScrubblerDB } from '../services/database.ts';
 import { error, log } from '../services/logger.ts';
 import Settings from '../services/settings.ts';
 import EditsFetcher from '../services/edits-fetcher.ts';
@@ -16,10 +16,7 @@ import type {
 } from '../types/lastfm.ts';
 import type { EditScrobbleJob } from '../types/jobs.ts';
 
-export default async function editScrobble(
-    job: EditScrobbleJob,
-    db: ScrobbleScrubblerDB,
-) {
+export default async function editScrobble(job: EditScrobbleJob, db: ScrubblerDB) {
     const url = `${getUserUrl()}/library/edit-track?edited-variation=library-track-scrobble`;
     const { csrfmiddlewaretoken } = await new Settings(db).get(['csrfmiddlewaretoken']);
     const data = job.data;
@@ -77,7 +74,7 @@ export default async function editScrobble(
  * When the result is overall wrong, the capitalization will be corrected when displayed.
  * With mixed capitalization, incorrect numbers would be determined and displayed.
  */
-async function normalizeCapitalization(data: EditFormValues, db: ScrobbleScrubblerDB) {
+async function normalizeCapitalization(data: EditFormValues, db: ScrubblerDB) {
     let { track_name, artist_name, album_name, album_artist_name } = data;
     const artistScrobble = await db.scrobbles
         .where('artist_name')
@@ -164,7 +161,7 @@ export async function externalEditScrobble(data: ExtendedEditFormValues) {
  * that have the *_original data of the edit as their target data.
  * If so, update these old edits with the target data of the new edit.
  */
-async function maintainEdits(data: ExtendedEditFormValues, db: ScrobbleScrubblerDB) {
+async function maintainEdits(data: ExtendedEditFormValues, db: ScrubblerDB) {
     try {
         const count = await db.edits
             .where('track_name')
