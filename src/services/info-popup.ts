@@ -214,13 +214,14 @@ export default class InfoPopup {
         let artistSum: TemplateResult | undefined;
         let albumSum: TemplateResult | undefined;
         if (this.artistScrobblesCount) {
-            const artist = this.subject === 'album' ? albumArtistName : artistName;
+            const isAlbum = this.subject === 'album';
+            const artist = isAlbum ? albumArtistName : artistName;
             artistSum = html`
                 <div class="sum">
                     <b>${this.artistScrobblesCount}</b>
                     total
                     <b>${libraryArtistLink(artist)}</b>
-                    artist scrobbles
+                    ${isAlbum ? ' album ' : ''}artist scrobbles
                 </div>
             `;
         }

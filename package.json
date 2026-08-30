@@ -1,6 +1,6 @@
 {
     "name": "ScrobbleScrubbler for Last.fm",
-    "version": "1.1.0",
+    "version": "1.1.1",
     "description": "Instant infos on and bulk editing of your last.fm scrobbles, and more.",
     "author": "Lutz Brückner",
     "license": "GPL-3.0-or-later",

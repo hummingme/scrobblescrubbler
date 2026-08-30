@@ -128,17 +128,17 @@ export async function externalEditScrobble(data: ExtendedEditFormValues) {
                 .equalsIgnoreCase(data.track_name_original)
                 .and(
                     (scrobble: Scrobble) =>
-                        (timestampCheck(data.timestamp, scrobble.timestamp) &&
-                            data.artist_name_original.toLowerCase() ===
-                                scrobble.artist_name.toLowerCase() &&
+                        timestampCheck(data.timestamp, scrobble.timestamp) &&
+                        ((data.artist_name_original.toLowerCase() ===
+                            scrobble.artist_name.toLowerCase() &&
                             data.album_name_original === '' &&
                             scrobble.album_name === undefined) ||
-                        (data.album_name_original.toLowerCase() ===
-                            scrobble.album_name?.toLowerCase() &&
-                            ((data.album_artist_name_original === '' &&
-                                scrobble.album_artist_name === undefined) ||
-                                data.album_artist_name_original.toLowerCase() ===
-                                    scrobble.album_artist_name?.toLowerCase())),
+                            (data.album_name_original.toLowerCase() ===
+                                scrobble.album_name?.toLowerCase() &&
+                                ((data.album_artist_name_original === '' &&
+                                    scrobble.album_artist_name === undefined) ||
+                                    data.album_artist_name_original.toLowerCase() ===
+                                        scrobble.album_artist_name?.toLowerCase()))),
                 )
                 .modify({
                     artist_name: data.artist_name,
