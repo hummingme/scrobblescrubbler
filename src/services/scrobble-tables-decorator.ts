@@ -14,7 +14,7 @@ import {
     getTimestampFromRow,
     getScrubblerItemFromEditForm,
 } from '../lib/lastfm-page.ts';
-import { isUserUrl } from '../lib/library-links.ts';
+import { isUserOverviewUrl, isUserUrl } from '../lib/library-links.ts';
 import { emptyScrubblerItem } from '../lib/scrubbler.ts';
 import { ScrubblerItem } from '../types/scrubbler.ts';
 
@@ -80,7 +80,11 @@ export default class ScrobbleTablesDecorator {
         rows.forEach(async (row) => {
             const item: ScrubblerItem = this.getScrubblerItemFromRow(row);
             const timestamp = getTimestampFromRow(row);
-            const scrobbleExists = (await getTrackScrobbles(this.db, item)).length > 0;
+            const timestampSeconds = isUserOverviewUrl(location.href)
+                ? undefined
+                : timestamp / 1000;
+            const scrobbleExists =
+                (await getTrackScrobbles(this.db, item, timestampSeconds)).length > 0;
             let icon: TrackIcon | MissingIcon = new TrackIcon(this.db);
             let iconNode: HTMLButtonElement | undefined;
             if (scrobbleExists) {

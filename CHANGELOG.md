@@ -1,3 +1,13 @@
+# v1.1.2
+- Released on 2026/09/07
+- Bugfix: Always display the pink question mark icon in library scrobble lists when a scrobble is missing, instead of a disc icon if there are remaining track scrobbles.
+- If an additional scrobble is found during the inspection of the relevant timestamp after ctrl-click on a pink question mark icon, reload the displayed page and do not show a dialog.
+
+# v1.1.1
+- Released on 2026/08/30
+- Bugfix: If Last.fm's native "Edit scrobble" is used without the "Bulk edit" checkbox being enabled, update only the data of the one edited scrobble in the ScrobbleScrubbler database.
+- The text in the InfoPopup for albums has been adjusted to clarify that the number of total scrobbles refers there to the album artist.
+
 # v1.1.0
 - Released on 2026/08/18
 - Added an 'ignore' button to the Info Popup to not display a green disc icon for albums if there are other albums with the same title.

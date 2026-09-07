@@ -67,7 +67,8 @@ export default class ScrobbleChecker {
                 }
             } else {
                 // storedMissing && !existingMissing
-                this.showRefetchDialog(timestamp, page);
+                // fixed by the ScrobblesFetcher.processScrobbles() call in this.findScrobbles()
+                reloadPage();
             }
             this.stopSpinning();
         } catch (err) {

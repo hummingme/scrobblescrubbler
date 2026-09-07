@@ -45,6 +45,13 @@ export function isUserUrl(url: string) {
     return url.startsWith(`${getUserUrl()}`);
 }
 
+export function isUserOverviewUrl(url: string) {
+    if (!isUserUrl(url)) {
+        return false;
+    }
+    return !url.slice(getUserUrl().length).includes('/');
+}
+
 export function isLibraryUrl(url: string) {
     return url.startsWith(`${getUserUrl()}/library/music/`);
 }
