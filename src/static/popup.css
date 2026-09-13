@@ -57,6 +57,9 @@ form#switches {
     p {
         margin: 4px 0;
     }
+    p.gap {
+        margin: 12px 0;
+    }
     p.indent {
         margin-left: 26px;
     }

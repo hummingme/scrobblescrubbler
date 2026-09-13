@@ -131,8 +131,7 @@ function view(state: StatePayload) {
                     ${state.editsFetched} edits fetched
                     ${state.initState === 'running' ? `(${deltaText(editsToGo)})` : ''}
                 </p>
-
-                <p>
+                <p class="gap">
                     ${checkbox({
                         id: 'scrobbles-switch',
                         name: 'observeScrobbles',

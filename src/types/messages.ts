@@ -9,7 +9,9 @@ import type {
     DeleteFormValues,
     EditAlbumFormValues,
     EditFormValues,
+    LibrarySubject,
 } from '../types/lastfm.ts';
+import type { ScrubblerItem } from './scrubbler.ts';
 
 export const isMessage = (message: any): message is Message => {
     return (
@@ -24,6 +26,7 @@ export type Message =
     | CheckNowMessage
     | CheckScrobbleMessage
     | ContentReadyMessage
+    | ExternalDeleteItemMessage
     | ExternalDeleteScrobbleMessage
     | ExternalDeleteTrackeditMessage
     | ExternalEditAlbumMessage
@@ -53,6 +56,11 @@ export type CheckScrobbleMessage = {
 };
 export type ContentReadyMessage = {
     type: 'CONTENT_READY';
+};
+export type ExternalDeleteItemMessage = {
+    type: 'EXTERNAL_DELETE_ITEM';
+    subject: LibrarySubject;
+    item: ScrubblerItem;
 };
 export type ExternalDeleteScrobbleMessage = {
     type: 'EXTERNAL_DELETE_SCROBBLE';

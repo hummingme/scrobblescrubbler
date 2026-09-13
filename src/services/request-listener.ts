@@ -4,7 +4,9 @@
  */
 
 import { getActiveTabId } from '../lib/background.ts';
+import { itemLinkSubject } from '../lib/item-links.ts';
 import { namespace } from '../lib/runtime.ts';
+import { emptyScrubblerItem } from '../lib/scrubbler.ts';
 import {
     type EditAlbumFormKey,
     editAlbumFormKeys,
@@ -15,6 +17,7 @@ import {
     type DeleteFormKey,
     deleteFormKeys,
 } from '../types/lastfm.ts';
+import { ScrubblerItem } from '../types/scrubbler.ts';
 
 type FormDataEntry = Record<string, chrome.webRequest.FormDataItem[]>;
 
@@ -76,6 +79,8 @@ export default class RequestListener {
             this.editAlbum(formData, tabId);
         } else if (path.endsWith('/library/delete')) {
             this.deleteScrobble(formData, tabId);
+        } else if (path.endsWith('/+delete')) {
+            this.deleteItem(path.substring(0, path.length - '/+delete'.length), tabId);
         } else if (path.endsWith('automatic-edits/tracks')) {
             this.deleteTrackEdit(formData, tabId);
         }
@@ -150,6 +155,56 @@ export default class RequestListener {
                     cause: error,
                 });
             }
+        }
+    }
+    async deleteItem(path: string, tabId: number) {
+        const subject = itemLinkSubject(path);
+        const segments = path.split('/');
+        let item: ScrubblerItem | null = null;
+
+        switch (subject) {
+            case 'track': {
+                // /user/:user/library/music/:artist/_/:track
+                const artistName = decodeURIComponent(segments[5]);
+                const trackName = decodeURIComponent(segments[7]);
+                item =
+                    artistName && trackName
+                        ? { ...emptyScrubblerItem(), artistName, trackName }
+                        : null;
+                break;
+            }
+            case 'album': {
+                // /user/:user/library/music/:albumArtist/:album
+                const albumArtistName = decodeURIComponent(segments[5]);
+                const albumName = decodeURIComponent(segments[6]);
+                item =
+                    albumArtistName && albumName
+                        ? { ...emptyScrubblerItem(), albumArtistName, albumName }
+                        : null;
+                break;
+            }
+            case 'artist': {
+                // /user/:user/library/music/:artist
+                const artistName = encodeURIComponent(segments[5]);
+                item = artistName ? { ...emptyScrubblerItem(), artistName } : null;
+                break;
+            }
+        }
+        if (!subject || !item) {
+            this.log(
+                `Failed to extract ScrubblerItem for subject "${subject}" from path: ${path}`,
+            );
+            return;
+        }
+        try {
+            this.log(`Sending delete item, item: ${JSON.stringify(item)}`);
+            await namespace.tabs.sendMessage(tabId, {
+                type: 'EXTERNAL_DELETE_ITEM',
+                item,
+                subject,
+            });
+        } catch (error) {
+            throw Error(`Sending message failed, ${error}`, { cause: error });
         }
     }
     async deleteTrackEdit(formData: FormDataEntry, tabId: number) {

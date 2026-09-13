@@ -1,3 +1,7 @@
+# v1.1.3
+- Released on 2026/09/13
+- Bugfix: Update the ScrobbleScrulbber database when Last.fm's trash can icon is used on a library page to delete a track, album, or artist.
+
 # v1.1.2
 - Released on 2026/09/07
 - Bugfix: Always display the pink question mark icon in library scrobble lists when a scrobble is missing, instead of a disc icon if there are remaining track scrobbles.

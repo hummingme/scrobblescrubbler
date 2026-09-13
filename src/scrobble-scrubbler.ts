@@ -4,6 +4,7 @@
  */
 
 import { externalEditAlbum } from './lib/edit-album.ts';
+import { externalDeleteItem } from './lib/delete-item.ts';
 import { externalDeleteScrobble } from './lib/delete-scrobble.ts';
 import { externalDeleteTrackedit } from './lib/delete-trackedit.ts';
 import { externalEditScrobble } from './lib/edit-scrobble.ts';
@@ -41,6 +42,8 @@ if (userName !== '' && isLastfmPro()) {
             externalEditScrobble(message.data);
         } else if (type === 'EXTERNAL_EDIT_ALBUM') {
             externalEditAlbum(message.data);
+        } else if (type === 'EXTERNAL_DELETE_ITEM') {
+            externalDeleteItem(message.subject, message.item);
         } else if (type === 'EXTERNAL_DELETE_SCROBBLE') {
             externalDeleteScrobble(message.data);
         } else if (type === 'EXTERNAL_DELETE_TRACKEDIT') {
