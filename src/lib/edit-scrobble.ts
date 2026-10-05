@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: GPL-3-0-or-later
  */
 
+import { canUseEqualsIgnoreCase, equalsFunction } from './data-queries.ts';
 import { getUserUrl, getUserName } from './lastfm-page.ts';
 import postRequest from './post-request.ts';
 import { openDatabase, ScrubblerDB } from '../services/database.ts';
@@ -76,36 +77,39 @@ export default async function editScrobble(job: EditScrobbleJob, db: ScrubblerDB
  */
 async function normalizeCapitalization(data: EditFormValues, db: ScrubblerDB) {
     let { track_name, artist_name, album_name, album_artist_name } = data;
-    const artistScrobble = await db.scrobbles
-        .where('artist_name')
-        .equalsIgnoreCase(artist_name)
-        .first();
+    const artistScrobble = canUseEqualsIgnoreCase(artist_name)
+        ? await db.scrobbles.where('artist_name').equalsIgnoreCase(artist_name).first()
+        : null;
     if (artistScrobble) {
         artist_name = artistScrobble.artist_name;
     }
 
-    const trackScrobble = await db.scrobbles
-        .where('track_name')
-        .equalsIgnoreCase(track_name)
-        .and(
-            (scrobble: Scrobble) =>
-                artist_name.toLowerCase() === scrobble.artist_name.toLowerCase(),
-        )
-        .first();
+    const trackScrobble = canUseEqualsIgnoreCase(track_name)
+        ? await db.scrobbles
+              .where('track_name')
+              .equalsIgnoreCase(track_name)
+              .and(
+                  (scrobble: Scrobble) =>
+                      artist_name.toLowerCase() === scrobble.artist_name.toLowerCase(),
+              )
+              .first()
+        : null;
     if (trackScrobble) {
         track_name = trackScrobble.track_name;
     }
 
     if (album_name !== '') {
-        const albumScrobble = await db.scrobbles
-            .where('album_name')
-            .equalsIgnoreCase(album_name)
-            .and(
-                (scrobble: Scrobble) =>
-                    album_artist_name.toLowerCase() ===
-                    scrobble.album_artist_name?.toLowerCase(),
-            )
-            .first();
+        const albumScrobble = canUseEqualsIgnoreCase(album_name)
+            ? await db.scrobbles
+                  .where('album_name')
+                  .equalsIgnoreCase(album_name)
+                  .and(
+                      (scrobble: Scrobble) =>
+                          album_artist_name.toLowerCase() ===
+                          scrobble.album_artist_name?.toLowerCase(),
+                  )
+                  .first()
+            : null;
         if (albumScrobble) {
             album_name = albumScrobble.album_name || '';
             album_artist_name = albumScrobble.album_artist_name || '';
@@ -121,11 +125,12 @@ export async function externalEditScrobble(data: ExtendedEditFormValues) {
         data['edit_all'] === 'on'
             ? () => true
             : (dataTS: string, scrobbleTS: number) => Number(dataTS) === scrobbleTS;
+    const equalsFunc = equalsFunction(data.track_name_original);
     const count = await db
         .transaction('rw', db.scrobbles, async () => {
             return await db.scrobbles
                 .where('track_name')
-                .equalsIgnoreCase(data.track_name_original)
+                [equalsFunc](data.track_name_original)
                 .and(
                     (scrobble: Scrobble) =>
                         timestampCheck(data.timestamp, scrobble.timestamp) &&
@@ -163,9 +168,10 @@ export async function externalEditScrobble(data: ExtendedEditFormValues) {
  */
 async function maintainEdits(data: ExtendedEditFormValues, db: ScrubblerDB) {
     try {
+        const equalsFunc = equalsFunction(data.track_name_original);
         const count = await db.edits
             .where('track_name')
-            .equalsIgnoreCase(data.track_name_original)
+            [equalsFunc](data.track_name_original)
             .and(
                 (row) =>
                     row.artist_name.toLowerCase() ===

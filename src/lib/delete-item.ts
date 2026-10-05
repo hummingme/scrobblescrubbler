@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: GPL-3-0-or-later
  */
 
+import { equalsFunction } from './data-queries.ts';
 import { getUserName } from './lastfm-page.ts';
 import { openDatabase, ScrubblerDB } from '../services/database.ts';
 import { log } from '../services/logger.ts';
@@ -25,9 +26,10 @@ async function deleteItemData(
     await db
         .transaction('rw', db.scrobbles, db.settings, async () => {
             if (subject === 'track' && trackName && artistName) {
+                const equalsFunc = equalsFunction(trackName);
                 count = await db.scrobbles
                     .where('track_name')
-                    .equalsIgnoreCase(trackName)
+                    [equalsFunc](trackName)
                     .and(
                         (scrobble: Scrobble) =>
                             scrobble.artist_name.toLowerCase() ===
@@ -35,9 +37,10 @@ async function deleteItemData(
                     )
                     .delete();
             } else if (subject === 'album' && albumName && albumArtistName) {
+                const equalsFunc = equalsFunction(albumName);
                 count = await db.scrobbles
                     .where('album_name')
-                    .equalsIgnoreCase(albumName)
+                    [equalsFunc](albumName)
                     .and(
                         (scrobble: Scrobble) =>
                             String(scrobble.album_artist_name).toLowerCase() ===
@@ -45,9 +48,10 @@ async function deleteItemData(
                     )
                     .delete();
             } else if (subject === 'artist' && artistName) {
+                const equalsFunc = equalsFunction(artistName);
                 count = await db.scrobbles
                     .where('artist_name')
-                    .equalsIgnoreCase(artistName)
+                    [equalsFunc](artistName)
                     .delete();
             }
             log(

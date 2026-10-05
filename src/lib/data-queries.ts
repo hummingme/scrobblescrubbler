@@ -5,6 +5,7 @@
 
 import type { ArtistAlbums } from './checked-albums.ts';
 import { ScrubblerDB } from '../services/database.ts';
+import { log } from '../services/logger.ts';
 import type { Scrobble } from '../types/lastfm.ts';
 import type { ScrubblerItem } from '../types/scrubbler.ts';
 
@@ -92,9 +93,10 @@ export async function getCheckedAlbumTitleScrobbles(
     item: ScrubblerItem,
     albums: ArtistAlbums,
 ) {
+    const equalsFunc = equalsFunction(item.albumName);
     const scrobbles: Scrobble[] = await db.scrobbles
         .where('album_name')
-        .equalsIgnoreCase(item.albumName)
+        [equalsFunc](item.albumName)
         .and(checkedAlbumsFilter(albums))
         .toArray();
     return scrobbles;
@@ -166,9 +168,10 @@ export async function getAlbumStats(db: ScrubblerDB, item: ScrubblerItem) {
             )
             .map((scrobble) => `${scrobble.artist_name}${scrobble.track_name}`),
     );
+    const equalsFunc = equalsFunction(albumName);
     const albumTitleScrobbles: Scrobble[] = await db.scrobbles
         .where('album_name')
-        .equalsIgnoreCase(albumName)
+        [equalsFunc](albumName)
         .toArray();
     const albumsScrobbleCounts = sortedAlbumsScrobbleCounts(tracksScrobbles);
     const albumsCount = Array.from(albumsScrobbleCounts.values()).reduce(
@@ -190,9 +193,10 @@ export async function getAlbumStats(db: ScrubblerDB, item: ScrubblerItem) {
 }
 
 export async function getAlbumTitleStats(db: ScrubblerDB, item: ScrubblerItem) {
+    const equalsFunc = equalsFunction(item.albumName);
     const scrobbles: Scrobble[] = await db.scrobbles
         .where('album_name')
-        .equalsIgnoreCase(item.albumName)
+        [equalsFunc](item.albumName)
         .toArray();
     return {
         scrobblesCount: scrobbles.length,
@@ -377,4 +381,18 @@ export async function albumArtistScrobblesCount(
             .equals(albumArtistName)
             .primaryKeys()
     ).length;
+}
+
+/*
+ * check if it is safe to us Dexie's equalsIgnoreCase()
+ * https://github.com/dexie/Dexie.js/issues/2339
+ */
+export function canUseEqualsIgnoreCase(needle: string) {
+    const canUse = needle.toUpperCase() <= needle.toLowerCase();
+    if (!canUse) log(`cannot use equalsIgnoreCase for: ${needle}`);
+    return canUse;
+}
+
+export function equalsFunction(needle: string) {
+    return canUseEqualsIgnoreCase(needle) ? 'equalsIgnoreCase' : 'equals';
 }

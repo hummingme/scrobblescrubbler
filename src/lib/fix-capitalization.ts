@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: GPL-3-0-or-later
  */
 
+import { canUseEqualsIgnoreCase } from './data-queries.ts';
 import { ScrubblerDB } from '../services/database.ts';
 import { log } from '../services/logger.ts';
 import type { Scrobble } from '../types/lastfm.ts';
@@ -43,6 +44,9 @@ export async function fixCapitalization(
 
 async function fixArtistName(item: ScrubblerItem, db: ScrubblerDB) {
     const { artistName } = item;
+    if (!canUseEqualsIgnoreCase(artistName)) {
+        return 0;
+    }
     return await db.scrobbles
         .where('artist_name')
         .equalsIgnoreCase(artistName)
@@ -58,6 +62,9 @@ async function fixArtistName(item: ScrubblerItem, db: ScrubblerDB) {
 
 async function fixTrackName(item: ScrubblerItem, db: ScrubblerDB) {
     const { artistName, trackName } = item;
+    if (!canUseEqualsIgnoreCase(trackName)) {
+        return 0;
+    }
     return await db.scrobbles
         .where('track_name')
         .equalsIgnoreCase(trackName)
@@ -71,6 +78,9 @@ async function fixTrackName(item: ScrubblerItem, db: ScrubblerDB) {
 
 async function fixAlbumName(item: ScrubblerItem, db: ScrubblerDB) {
     const { albumName, albumArtistName } = item;
+    if (!canUseEqualsIgnoreCase(albumName)) {
+        return 0;
+    }
     return await db.scrobbles
         .where('album_name')
         .equalsIgnoreCase(albumName)
@@ -112,6 +122,9 @@ export async function hasDivergentAlbumCapitalizations(
     item: ScrubblerItem,
     db: ScrubblerDB,
 ) {
+    if (!canUseEqualsIgnoreCase(item.albumName)) {
+        return false;
+    }
     const divergent = await db.scrobbles
         .where('album_name')
         .equalsIgnoreCase(item.albumName)
@@ -129,6 +142,9 @@ export async function hasDivergentAlbumArtistCapitalizations(
     albumArtistName: string,
     db: ScrubblerDB,
 ) {
+    if (!canUseEqualsIgnoreCase(albumArtistName)) {
+        return false;
+    }
     const divergentAlbumArtistName = Boolean(
         await db.scrobbles
             .where('album_artist_name')
@@ -150,6 +166,9 @@ export async function hasDivergentTrackCapitalizations(
     item: ScrubblerItem,
     db: ScrubblerDB,
 ) {
+    if (!canUseEqualsIgnoreCase(item.trackName)) {
+        return false;
+    }
     const divergentTrackName = await db.scrobbles
         .where('track_name')
         .equalsIgnoreCase(item.trackName)

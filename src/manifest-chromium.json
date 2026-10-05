@@ -1,7 +1,7 @@
 {
     "manifest_version": 3,
     "name": "ScrobbleScrubbler for Last.fm",
-    "version": "1.1.3",
+    "version": "1.1.4",
     "description": "Instant infos on and bulk editing of your Last.fm scrobbles, and more.",
     "author": "Lutz Brückner",
     "homepage_url": "https://github.com/hummingme/scrobblescrubbler#readme",

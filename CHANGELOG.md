@@ -1,6 +1,11 @@
+# v1.1.4
+- Released on 2026/10/05
+- Always check whether using Dexie's equalsIgnoreCase function is safe, as it throws an exception on some exotic characters.
+- Trim leading and trailing spaces from input before saving an edited scrobble.
+
 # v1.1.3
 - Released on 2026/09/13
-- Bugfix: Update the ScrobbleScrulbber database when Last.fm's trash can icon is used on a library page to delete a track, album, or artist.
+- Bugfix: Update the ScrobbleScrubbler database when Last.fm's trash can icon is used on a library page to delete a track, album, or artist.
 
 # v1.1.2
 - Released on 2026/09/07

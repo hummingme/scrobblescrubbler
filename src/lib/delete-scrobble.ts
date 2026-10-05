@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: GPL-3-0-or-later
  */
 
+import { equalsFunction } from './data-queries.ts';
 import { getUserName, getUserUrl } from './lastfm-page.ts';
 import postRequest from './post-request.ts';
 import { openDatabase, ScrubblerDB } from '../services/database.ts';
@@ -39,9 +40,10 @@ export async function externalDeleteScrobble(data: DeleteFormValues) {
 }
 
 async function deleteScrobbleData(data: DeleteFormValues, db: ScrubblerDB) {
+    const equalsFunc = equalsFunction(data.track_name);
     const count = await db.scrobbles
         .where('track_name')
-        .equalsIgnoreCase(data.track_name)
+        [equalsFunc](data.track_name)
         .and(
             (scrobble: Scrobble) =>
                 data.artist_name.toLowerCase() === scrobble.artist_name.toLowerCase() &&

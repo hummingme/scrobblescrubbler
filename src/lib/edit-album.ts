@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: GPL-3-0-or-later
  */
 
+import { equalsFunction } from './data-queries.ts';
 import { getUserName } from './lastfm-page.ts';
 import { openDatabase } from '../services/database.ts';
 import { log } from '../services/logger.ts';
@@ -11,11 +12,12 @@ import type { EditAlbumFormValues, Scrobble } from '../types/lastfm.ts';
 export async function externalEditAlbum(data: EditAlbumFormValues) {
     const userName = getUserName();
     const db = await openDatabase(userName);
+    const equalsFunc = equalsFunction(data.album_name_original);
     const count = await db
         .transaction('rw', db.scrobbles, async () => {
             return await db.scrobbles
                 .where('album_name')
-                .equalsIgnoreCase(data.album_name_original)
+                [equalsFunc](data.album_name_original)
                 .and(
                     (scrobble: Scrobble) =>
                         data.album_artist_name_original.toLowerCase() ===

@@ -524,7 +524,7 @@ export default class EditPopup {
             if (element.type === 'checkbox' && element.checked === false) {
                 return;
             }
-            values.push([element.name, element.value]);
+            values.push([element.name, element.value.trim()]);
         });
         return Object.fromEntries(values) as EditFormData;
     }
@@ -537,10 +537,7 @@ export default class EditPopup {
         ];
         return scrobbleFields.some((key) => {
             const originalKey: OriginalKey<typeof key> = `${key}_original`;
-            return (
-                values[originalKey].trim().toLowerCase() !==
-                values[key].trim().toLowerCase()
-            );
+            return values[originalKey].toLowerCase() !== values[key].toLowerCase();
         });
     }
     noChangesWarning() {
