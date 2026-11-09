@@ -7,7 +7,7 @@ import { ScrubblerDB } from './database.ts';
 import Settings from './settings.ts';
 import MissingIcon from '../icons/missing-icon.ts';
 import TrackIcon from '../icons/track-icon.ts';
-import { getTrackScrobbles } from '../lib/data-queries.ts';
+import { getTrackScrobbles, scrobbleExists } from '../lib/data-queries.ts';
 import { fixCapitalization } from '../lib/fix-capitalization.ts';
 import {
     editScrobbleFormSelector,
@@ -83,11 +83,14 @@ export default class ScrobbleTablesDecorator {
             const timestampSeconds = isUserOverviewUrl(location.href)
                 ? undefined
                 : timestamp / 1000;
-            const scrobbleExists =
-                (await getTrackScrobbles(this.db, item, timestampSeconds)).length > 0;
+
+            const exists = isUserOverviewUrl(location.href)
+                ? (await getTrackScrobbles(this.db, item)).length > 0
+                : await scrobbleExists(this.db, item, timestampSeconds!);
+
             let icon: TrackIcon | MissingIcon = new TrackIcon(this.db);
             let iconNode: HTMLButtonElement | undefined;
-            if (scrobbleExists) {
+            if (exists) {
                 iconNode = await icon.addIcon(row, item);
             }
             if (

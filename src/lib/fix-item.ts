@@ -53,11 +53,22 @@ async function findScrobbleTimestamp(item: ScrubblerItem): Promise<number | unde
     const url = libraryTrackUrl(albumArtistName, trackName, true);
     const dom = await requestDocument(url);
     if (dom === undefined) return;
-    const value = dom.querySelector<HTMLInputElement>(
-        `${editScrobbleFormSelector} input[name="timestamp"]`,
-    )?.value;
+
+    let value: string | undefined;
+    if (albumName !== '') {
+        const albumSelector = `input[name="album_name"][value="${albumName}"]`;
+        value = dom.querySelector<HTMLInputElement>(
+            `${editScrobbleFormSelector}:has(${albumSelector}) input[name="timestamp"]`,
+        )?.value;
+    }
+    if (!value) {
+        value = dom.querySelector<HTMLInputElement>(
+            `${editScrobbleFormSelector} input[name="timestamp"]`,
+        )?.value;
+    }
+
     if (value) {
-        log(`findScrobbleTimeStamp found ${value}, ${dateTimeString(+value)}`);
+        log(`findScrobbleTimestamp found ${value}, ${dateTimeString(+value)}`);
         return parseInt(value);
     }
 }

@@ -10,12 +10,12 @@ import { emptyScrubblerItem } from '../lib/scrubbler.ts';
 import {
     type EditAlbumFormKey,
     editAlbumFormKeys,
-    type EditFormKey,
     editFormKeys,
     type DeleteTrackEditFormKey,
     deleteTrackEditFormKeys,
     type DeleteFormKey,
     deleteFormKeys,
+    ExtendedEditFormValues,
 } from '../types/lastfm.ts';
 import { ScrubblerItem } from '../types/scrubbler.ts';
 
@@ -87,16 +87,18 @@ export default class RequestListener {
     }
     async editScrobble(formData: FormDataEntry, tabId: number) {
         if (formData['submit']?.[0] !== 'edit-scrobble') return;
-        const data = {} as Record<EditFormKey | 'edit_all', string>;
+        const data = {} as ExtendedEditFormValues;
         for (const key of editFormKeys) {
             const value = formData[key]?.[0];
             if (typeof value === 'string') {
                 data[key] = value.trim();
             }
         }
-        const editAll = formData['edit_all']?.[0];
-        if (editAll === 'on') {
+        if (formData['edit_all']?.[0] === 'on') {
             data['edit_all'] = 'on';
+        }
+        if (formData['create_automatic_edit_rule']?.[0] === 'on') {
+            data['create_automatic_edit_rule'] = 'on';
         }
         if (editFormKeys.every((key) => !!data[key])) {
             try {

@@ -10,6 +10,7 @@ import { error, log } from './logger.ts';
 import ScrobblesFetcher from './scrobbles-fetcher.ts';
 import {
     albumArtistScrobblesCount,
+    albumlessScrobblesCount,
     albumScrobblesCount,
     artistScrobblesCount,
     trackScrobblesCount,
@@ -204,6 +205,19 @@ export default class ScrobbleChecker {
                 oldScrobble.album_name,
             );
         }
+        if (
+            modifications.album_name &&
+            !oldScrobble.album_name &&
+            modifications.album_artist_name &&
+            !oldScrobble.album_artist_name
+        ) {
+            affectedCounts.album_name = affectedCounts.album_artist_name =
+                await albumlessScrobblesCount(
+                    this.db,
+                    oldScrobble.artist_name,
+                    oldScrobble.track_name,
+                );
+        }
         return affectedCounts;
     }
     async showModificationsDialog(
@@ -298,18 +312,21 @@ export default class ScrobbleChecker {
         return message;
     }
     libraryLink(property: string, scrobble: Scrobble) {
+        const { track_name, artist_name, album_name, album_artist_name } = scrobble;
         switch (property) {
             case 'track_name':
-                return libraryTrackLink(scrobble.track_name, scrobble.artist_name);
+                return libraryTrackLink(track_name, artist_name);
             case 'album_name': {
-                const artistName = scrobble.album_artist_name || scrobble.artist_name;
-                return libraryAlbumLink(scrobble.album_name || '', artistName);
+                return album_name && album_artist_name
+                    ? libraryAlbumLink(album_name, album_artist_name)
+                    : '<undefined>';
             }
             case 'artist_name':
-                return libraryArtistLink(scrobble.artist_name);
+                return libraryArtistLink(artist_name);
             case 'album_artist_name': {
-                const artistName = scrobble.album_artist_name || scrobble.artist_name;
-                return libraryArtistLink(artistName);
+                return album_artist_name
+                    ? libraryArtistLink(album_artist_name)
+                    : '<undefined>';
             }
         }
     }
@@ -345,9 +362,8 @@ export default class ScrobbleChecker {
             <a href="${scrobbleUrl}">${text}</a>
         `;
     }
-    refetchDay(timestamp: number, event: Event) {
+    refetchDay(timestamp: number) {
         window.postMessage({ type: 'REFETCH_DAY', timestamp });
-        if (this.dialog) this.dialog.close(event);
     }
     async applyChanges(
         modifications: ScrobbleModifications,
@@ -358,7 +374,24 @@ export default class ScrobbleChecker {
         const db = await openDatabase(userName);
         Object.entries(modifications).forEach(async ([property, entry]) => {
             const { stored, existing } = entry;
-            if (property === 'artist_name') {
+            if (
+                (property === 'album_name' || property === 'album_artist_name') &&
+                stored === ''
+            ) {
+                // albumless scrobble
+                await db.scrobbles
+                    .where('track_name')
+                    .equals(existingScrobble.track_name)
+                    .and(
+                        (scrobble: Scrobble) =>
+                            scrobble.artist_name === existingScrobble.artist_name &&
+                            scrobble.album_name === undefined,
+                    )
+                    .modify({
+                        album_name: existingScrobble.album_name,
+                        album_artist_name: existingScrobble.album_artist_name,
+                    });
+            } else if (property === 'artist_name') {
                 await db.scrobbles
                     .where('artist_name')
                     .equals(stored)
@@ -370,6 +403,7 @@ export default class ScrobbleChecker {
                     .and((scrobble: Scrobble) => scrobble.album_artist_name === stored)
                     .modify({ album_artist_name: existing });
             } else {
+                // property === 'track_name' || property === 'album_name'
                 const artistProperty =
                     property === 'album_name' ? 'album_artist_name' : 'artist_name';
                 await db.scrobbles

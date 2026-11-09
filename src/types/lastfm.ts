@@ -27,7 +27,7 @@ export type ScrobbleBase = Omit<Scrobble, 'sequence'>;
 
 export type ScrobbleField = keyof Omit<ScrobbleBase, 'timestamp'>;
 
-export interface TrackEdit {
+export type TrackEdit = {
     hash: string;
     position: number;
     track_name: string;
@@ -38,7 +38,7 @@ export interface TrackEdit {
     album_name_original: string;
     album_artist_name: string;
     album_artist_name_original: string;
-}
+};
 
 export const editFormKeys = [
     'artist_name',
@@ -54,8 +54,12 @@ export const editFormKeys = [
 export type EditFormKey = (typeof editFormKeys)[number];
 export type EditFormValues = Record<EditFormKey, string>;
 
+export type ScrobbleFormBaseKey =
+    'artist_name' | 'track_name' | 'album_artist_name' | 'album_name';
+export type ScrobbleFormOriginalKey<F extends ScrobbleFormBaseKey> = `${F}_original`;
+
 export type ExtendedEditFormValues = EditFormValues & {
-    create_automatic_edit_rule?: string;
+    create_automatic_edit_rule?: 'on';
     edit_all?: 'on';
 };
 

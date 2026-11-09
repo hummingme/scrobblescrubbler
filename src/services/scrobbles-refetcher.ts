@@ -3,10 +3,11 @@
  * SPDX-License-Identifier: GPL-3-0-or-later
  */
 
-import { html } from 'lit-html';
+import { html, TemplateResult } from 'lit-html';
 
 import { ScrubblerDB } from './database.ts';
-import { warn } from './logger.ts';
+import EditsFetcher from './edits-fetcher.ts';
+import { log, warn } from './logger.ts';
 import ScrobblesFetcher from './scrobbles-fetcher.ts';
 import { formatDate } from '../lib/format-date.ts';
 import ModalDialog from '../lib/modal-dialog.ts';
@@ -28,9 +29,13 @@ export default class ScrobblesRefetcher {
         this.showDialog(start, end);
     }
     parseRefetchParam(refetch: string) {
-        function logInvalid(refetch: string) {
+        const logInvalid = (refetch: string) =>
             warn(`"refetch=${refetch}" did not represent a valid refetch period!`);
+
+        if (refetch === 'edits') {
+            return ['edits'];
         }
+
         const parts = refetch.split('-');
         if (parts.length < 1 || parts.length > 3) {
             logInvalid(refetch);
@@ -74,28 +79,39 @@ export default class ScrobblesRefetcher {
         );
     }
     showDialog(start: string, end: string) {
+        let subject: string;
+        let desc: TemplateResult;
+        if (start && end) {
+            subject = 'scrobbles';
+            desc = html`
+                the scrobbles from
+                <b>${start}</b>
+                ${
+                    end !== start
+                        ? html`
+                              to
+                              <b>${end}</b>
+                          `
+                        : ''
+                }
+            `;
+        } else {
+            subject = 'edits';
+            desc = html`
+                <b>all track edits</b>
+            `;
+        }
         this.dialog = new ModalDialog();
-        const timeframe = html`
-            <b>${start}</b>
-            ${
-                end !== start
-                    ? html`
-                          to
-                          <b>${end}</b>
-                      `
-                    : ''
-            }
-        `;
         const message = html`
             <h2>ScrobbleScrubbler got a refetch request</h2>
-            <p>After confirmation, the scrobbles from ${timeframe} will get refetched.</p>
+            <p>After confirmation, ${desc} will get refetched.</p>
             <div class="scrobble-scrubbler-buttons">
                 <button
                     class="btn-primary"
                     autofocus
                     @click=${this.initRefetch.bind(this, start, end)}
                 >
-                    refetch scrobbles
+                    refetch ${subject}
                 </button>
                 <button
                     class="btn-secondary"
@@ -108,11 +124,21 @@ export default class ScrobblesRefetcher {
         this.dialog.show(message);
     }
     async initRefetch(start: string, end: string) {
-        const scrobblesFetcher = new ScrobblesFetcher(this.db);
-        const jobCount: number | undefined = await scrobblesFetcher.reFetch(
-            Date.parse(start),
-            Date.parse(end),
-        );
+        log(`ScrobblesRefetcher.initRefetch invoked, start: ${start}, end: ${end}`);
+        const button =
+            this.dialog?.dialogNode.querySelector<HTMLButtonElement>('.btn-primary');
+        if (!button) return;
+        button.setAttribute('disabled', '');
+        button.innerText = 'preparing...';
+
+        let jobCount: number | undefined;
+        if (start && end) {
+            const scrobblesFetcher = new ScrobblesFetcher(this.db);
+            jobCount = await scrobblesFetcher.reFetch(Date.parse(start), Date.parse(end));
+        } else {
+            const editsFetcher = new EditsFetcher(this.db);
+            jobCount = await editsFetcher.reFetch();
+        }
         this.showResult(jobCount);
     }
     showResult(result: number | undefined) {

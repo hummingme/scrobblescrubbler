@@ -1,3 +1,13 @@
+# v1.2.0
+Released on 2025/11/09
+- Rescanning of the automatic track edits has been added when the URL parameter ￼￼rescan=edits￼￼ is used.
+- Bugfix: Rescan of scrobbles for time periods ￼￼month￼￼ and ￼￼year￼￼ is working again.
+- When rescanning scrobbles, the scrobbles for the selected period are now deleted from the database beforehand.
+- Bugfix: When an external scrobble edit or album edit is captured, don't update the database if only casings were changed, beause the change will also be rejected by Last.fm.
+- The MissingIcon is now displayed  for affected scrobbles on library track pages.
+- The MissingIcon is now prioritized for scrobbles on library scrobble lists to make faulty database data easier to spot and correct.
+- Overall improved handling of corrections after Ctrl-clicking on a MissingIcon, especially for scrobbles without an album.
+
 # v1.1.4
 - Released on 2026/10/05
 - Always check whether using Dexie's equalsIgnoreCase function is safe, as it throws an exception on some exotic characters.

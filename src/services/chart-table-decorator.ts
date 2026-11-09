@@ -20,8 +20,8 @@ import {
     getScrubblerItemFromLovedForm,
     getUserUrl,
 } from '../lib/lastfm-page.ts';
-import { emptyScrubblerItem } from '../lib/scrubbler.ts';
-import type { LibrarySubject } from '../types/lastfm.ts';
+import { emptyScrubblerItem, itemEqualsScrobble } from '../lib/scrubbler.ts';
+import type { LibrarySubject, Scrobble } from '../types/lastfm.ts';
 import type { ScrubblerItem } from '../types/scrubbler.ts';
 
 /*
@@ -114,10 +114,16 @@ export default class ChartTablesDecorator {
         });
     }
     async addTracklistIcon(item: ScrubblerItem, row: HTMLElement) {
+        const mapKey = `${item.artistName}~${item.trackName}`;
+        if (this.scrobbleMapKey !== mapKey) {
+            const scrobbles = await getTrackScrobbles(this.db, item);
+            this.scrobbleMap = new Map(scrobbles.map((s) => [s.timestamp * 1000, s]));
+            this.scrobbleMapKey = mapKey;
+            setTimeout(() => this.clearScrobbleMap(), 1000);
+        }
         const timestamp = getTimestampFromRow(row);
-        const scrobbleExists =
-            (await getTrackScrobbles(this.db, item, timestamp / 1000)).length > 0;
-        if (scrobbleExists) {
+        const rowScrobble = this.scrobbleMap.get(timestamp);
+        if (rowScrobble && itemEqualsScrobble(item, rowScrobble)) {
             return; // only MissingIcons are added in tracklists
         }
         if (!this.capitalizationFixes.has(JSON.stringify(item))) {
@@ -129,6 +135,12 @@ export default class ChartTablesDecorator {
         await icon.addIcon(row, item, 'track');
     }
     capitalizationFixes: Set<string> = new Set();
+    scrobbleMapKey = '';
+    scrobbleMap: Map<number, Scrobble> = new Map();
+    clearScrobbleMap() {
+        this.scrobbleMapKey = '';
+        this.scrobbleMap = new Map();
+    }
     isTracklistRow(row: HTMLElement) {
         return row.dataset.editScrobbleId !== undefined;
     }

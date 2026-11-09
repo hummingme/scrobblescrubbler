@@ -82,8 +82,8 @@ export default class EditsFetcher {
                 { name: 'editsCount', value: count },
                 { name: 'lastEditsCheck', value: Date.now() },
             ]);
-            this.addJobs(count - editsCount, { skipFirst: true });
             this.extractEdits(dom, count);
+            return this.addJobs(count - editsCount, { skipFirst: true });
         }
     }
     async requestPage(page: number) {
@@ -110,15 +110,20 @@ export default class EditsFetcher {
         const success = edits.length > 0;
         return { job, success };
     }
+    async reFetch() {
+        await this.settings.set([{ name: 'editsCount', value: 0 }]);
+        await this.db.edits.clear();
+        return await this.check();
+    }
     addJobs(
         count: number,
         options: { skipFirst?: boolean; init?: boolean; startPage?: number },
     ) {
-        if (count <= 0) return;
+        if (count <= 0) return 0;
         const startPage = options.startPage || 1;
         const { skipFirst, init } = options;
         const pages = Math.ceil(count / 50);
-        if (pages === 1 && skipFirst) return;
+        if (pages === 1 && skipFirst) return 0;
 
         const hashes: string[] = [];
         const jobs: FetchTrackeditsJob[] = [];
@@ -140,22 +145,26 @@ export default class EditsFetcher {
             });
         }
         const db = this.db;
-        db.transaction('rw', db.jobs, async () => {
-            const existingJobs = await db.jobs
-                .where('hash')
-                .anyOf(hashes)
-                .filter((job) => ['waiting', 'running'].includes(job.state))
-                .toArray();
-            const existingHashes: string[] = existingJobs.map((job) => job.hash);
-            const newJobs = jobs.filter(
-                (job) => existingHashes.includes(job.hash) === false,
-            );
-            await db.jobs.bulkAdd(newJobs);
-            log(`EditsFetcher added ${newJobs.length} getTrackedits jobs`);
-            reportJobsCount(db);
-        }).catch((err) => {
-            error(`EditsFetcher.addJobs failed: ${err}`);
-        });
+        return db
+            .transaction('rw', db.jobs, async () => {
+                const existingJobs = await db.jobs
+                    .where('hash')
+                    .anyOf(hashes)
+                    .filter((job) => ['waiting', 'running'].includes(job.state))
+                    .toArray();
+                const existingHashes: string[] = existingJobs.map((job) => job.hash);
+                const newJobs = jobs.filter(
+                    (job) => existingHashes.includes(job.hash) === false,
+                );
+                await db.jobs.bulkAdd(newJobs);
+                log(`EditsFetcher added ${newJobs.length} getTrackedits jobs`);
+                reportJobsCount(db);
+                return newJobs.length;
+            })
+            .catch((err) => {
+                error(`EditsFetcher.addJobs failed: ${err}`);
+                return undefined;
+            });
     }
     async extractEdits(dom: Document, count: number, page = 1): Promise<TrackEdit[]> {
         const forms = dom.querySelectorAll<HTMLFormElement>(

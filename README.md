@@ -116,13 +116,16 @@ There is [detailed documentation](https://hummingme.github.io/kahuna-docs/) for 
 
 In the example shown, 125 background jobs would be created, and after about 10 minutes my last Lana Del Rey scrobble would be irreversibly deleted.
 
-### Refetching Scrobbles
+### Refetching Scrobbles & Edits
 It is very likely that the data in the extensions database will not always match the actual scrobbles and edits data 100%. There are many known and unknown reasons for this: errors in ScobbleScrubbler, errors in Last.fm, but most likely, scrobbles are being edited in other browsers. My best advice: Do not edit your scrobbles in other browsers, and make peace with the remaining differences.
 
-However, if you ever have a reason to re-fetch the scrobble data for a specific period, this can be triggered with the special URL parameter `refetch`. Examples of how to trigger a re-fetch of scrobbles for a day, month, or year:
+However, if you ever have a reason to re-fetch the data for a specific period, this can be triggered with the special URL parameter `refetch`. Examples of how to trigger a re-fetch of scrobbles for a day, month, or year:
 <p>`https://www.last.fm/home?refetch=2026-01-15`</p>
 <p>`https://www.last.fm/home?refetch=2025-12`</p>
 <p>`https://www.last.fm/home?refetch=2010`</p>
+
+Or, to refetch the complete automatic track edit data:
+<p>`https://www.last.fm/home?refetch=edits`</p>
 
 ## 💀 Warning
 First, by maintaining its own database, ScrobbleScrubbler violates the good practice of the [_&bdquo;Single Source of Truth"_](https://en.wikipedia.org/wiki/Single_source_of_truth). Last.fm is always correct, and there are many reasons why the extensions database can fall behind and display incomplete or incorrect data. The main reason for this is when scrobbles are edited in a different browser.

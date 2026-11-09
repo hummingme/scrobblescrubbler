@@ -19,6 +19,7 @@ import ModalDialog from '../lib/modal-dialog.ts';
 import checkbox from '../lib/checkbox.ts';
 import { reportJobsCount } from '../lib/jobs-count.ts';
 import { camelize } from '../lib/lastfm-page.ts';
+import { scrobbleChanged } from '../lib/edit-changed.ts';
 import {
     mapScrobbleCounts,
     tracksCountsTitle,
@@ -48,9 +49,6 @@ export type EditFormData = EditFormValues & {
     submit: 'edit-scrobble';
     ajax: '1';
 };
-
-type BaseKey = 'artist_name' | 'track_name' | 'album_artist_name' | 'album_name';
-type OriginalKey<F extends BaseKey> = `${F}_original`;
 
 export default class EditPopup {
     db: ScrubblerDB;
@@ -495,7 +493,7 @@ export default class EditPopup {
             (element) => element instanceof HTMLInputElement,
         );
         const values = this.formValues(elements);
-        if (this.formChanged(values)) {
+        if (scrobbleChanged(values)) {
             const modifications = this.modifiedFormValues(
                 this.getDistinctScrobbles(),
                 values,
@@ -527,18 +525,6 @@ export default class EditPopup {
             values.push([element.name, element.value.trim()]);
         });
         return Object.fromEntries(values) as EditFormData;
-    }
-    formChanged(values: EditFormValues) {
-        const scrobbleFields: BaseKey[] = [
-            'artist_name',
-            'track_name',
-            'album_artist_name',
-            'album_name',
-        ];
-        return scrobbleFields.some((key) => {
-            const originalKey: OriginalKey<typeof key> = `${key}_original`;
-            return values[originalKey].toLowerCase() !== values[key].toLowerCase();
-        });
     }
     noChangesWarning() {
         const headline = this.dialog.dialogNode.querySelector<HTMLElement>('h1');

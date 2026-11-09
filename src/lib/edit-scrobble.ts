@@ -4,6 +4,7 @@
  */
 
 import { canUseEqualsIgnoreCase, equalsFunction } from './data-queries.ts';
+import { scrobbleChanged } from './edit-changed.ts';
 import { getUserUrl, getUserName } from './lastfm-page.ts';
 import postRequest from './post-request.ts';
 import { openDatabase, ScrubblerDB } from '../services/database.ts';
@@ -119,6 +120,10 @@ async function normalizeCapitalization(data: EditFormValues, db: ScrubblerDB) {
 }
 
 export async function externalEditScrobble(data: ExtendedEditFormValues) {
+    if (!scrobbleChanged(data)) {
+        log('externalEditScrobble, data not changed', data);
+        return;
+    }
     const userName = getUserName();
     const db = await openDatabase(userName);
     const timestampCheck =

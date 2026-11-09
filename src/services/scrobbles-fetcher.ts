@@ -107,11 +107,12 @@ export default class ScrobblesFetcher {
         return true;
     }
     async reFetch(start: number, end: number) {
-        const { count, dom } = await this.requestCount(start, end);
+        const { count, dom } = await this.requestCount(end, start);
         if (count === undefined || dom === undefined) return;
 
+        await this.deleteScrobbles(start, end);
         await this.processScrobbles(dom);
-        const url = this.scrobblesUrl(start, end);
+        const url = this.scrobblesUrl(end, start);
         return await this.addJobs(count, url, { skipFirst: true });
     }
     async check() {
@@ -233,6 +234,17 @@ export default class ScrobblesFetcher {
             scrobbles.push(scrobble);
         });
         return scrobbles;
+    }
+    async deleteScrobbles(startTs: number, endTs: number) {
+        const startOffset = new Date(startTs).getTimezoneOffset() * 60;
+        const endOffset = new Date(endTs).getTimezoneOffset() * 60;
+        const start = Math.round(startTs / 1000 + startOffset);
+        const end = Math.round(endTs / 1000) + 86400 + endOffset;
+        const cnt = await this.db.scrobbles
+            .where('timestamp')
+            .between(start, end)
+            .delete();
+        log(`deleted ${cnt} scrobbles from scrubbler database`);
     }
     async extractLovedTracks(dom: Document) {
         const forms = dom.querySelectorAll<HTMLFormElement>(

@@ -26,6 +26,26 @@ export async function getTrackScrobbles(
         .toArray();
 }
 
+export async function scrobbleExists(
+    db: ScrubblerDB,
+    item: ScrubblerItem,
+    timestamp: number,
+): Promise<boolean> {
+    return (
+        (await db.scrobbles
+            .where('timestamp')
+            .equals(timestamp)
+            .and(
+                (scrobble) =>
+                    scrobble.track_name === item.trackName &&
+                    scrobble.artist_name === item.artistName &&
+                    scrobble.album_name === (item.albumName || undefined) &&
+                    scrobble.album_artist_name === (item.albumArtistName || undefined),
+            )
+            .count()) > 0
+    );
+}
+
 async function getAlbumScrobbles(
     db: ScrubblerDB,
     item: ScrubblerItem,
@@ -339,8 +359,7 @@ export async function artistScrobblesCount(
     db: ScrubblerDB,
     artistName: string,
 ): Promise<number> {
-    return (await db.scrobbles.where('artist_name').equals(artistName).primaryKeys())
-        .length;
+    return await db.scrobbles.where('artist_name').equals(artistName).count();
 }
 
 export async function trackScrobblesCount(
@@ -348,13 +367,11 @@ export async function trackScrobblesCount(
     artistName: string,
     trackName: string,
 ): Promise<number> {
-    return (
-        await db.scrobbles
-            .where('track_name')
-            .equals(trackName)
-            .and((scrobble: Scrobble) => scrobble.artist_name === artistName)
-            .primaryKeys()
-    ).length;
+    return await db.scrobbles
+        .where('track_name')
+        .equals(trackName)
+        .and((scrobble: Scrobble) => scrobble.artist_name === artistName)
+        .count();
 }
 
 export async function albumScrobblesCount(
@@ -362,25 +379,36 @@ export async function albumScrobblesCount(
     albumArtistName: string,
     albumName: string,
 ): Promise<number> {
-    return (
-        await db.scrobbles
-            .where('album_name')
-            .equals(albumName)
-            .and((scrobble: Scrobble) => scrobble.album_artist_name === albumArtistName)
-            .primaryKeys()
-    ).length;
+    return await db.scrobbles
+        .where('album_name')
+        .equals(albumName)
+        .and((scrobble: Scrobble) => scrobble.album_artist_name === albumArtistName)
+        .count();
+}
+
+export async function albumlessScrobblesCount(
+    db: ScrubblerDB,
+    artistName: string,
+    trackName: string,
+) {
+    return await db.scrobbles
+        .where('track_name')
+        .equals(trackName)
+        .and((scrobble: Scrobble) => {
+            return (
+                scrobble.artist_name === artistName &&
+                !scrobble.album_name &&
+                !scrobble.album_artist_name
+            );
+        })
+        .count();
 }
 
 export async function albumArtistScrobblesCount(
     db: ScrubblerDB,
     albumArtistName: string,
 ): Promise<number> {
-    return (
-        await db.scrobbles
-            .where('album_artist_name')
-            .equals(albumArtistName)
-            .primaryKeys()
-    ).length;
+    return await db.scrobbles.where('album_artist_name').equals(albumArtistName).count();
 }
 
 /*

@@ -1,6 +1,6 @@
 {
     "name": "ScrobbleScrubbler for Last.fm",
-    "version": "1.1.4",
+    "version": "1.2.0",
     "description": "Instant infos on and bulk editing of your last.fm scrobbles, and more.",
     "author": "Lutz Brückner",
     "license": "GPL-3.0-or-later",
@@ -24,21 +24,21 @@
     "dependencies": {
         "@open-wc/lit-helpers": "^0.7.0",
         "blueimp-md5": "^2.19.0",
-        "dexie": "^4.4.5",
+        "dexie": "^4.4.7",
         "lit": "^3.3.3",
         "lit-html": "^3.3.3"
     },
     "devDependencies": {
         "@eslint/js": "^10.0.1",
         "@types/blueimp-md5": "^2.18.2",
-        "@types/bun": "^1.4.2",
+        "@types/bun": "^1.4.4",
         "@types/chrome": "^0.2.9",
-        "@types/firefox-webext-browser": "^143.0.0",
-        "eslint": "^10.10.0",
+        "@types/firefox-webext-browser": "^143.0.1",
+        "eslint": "^10.14.0",
         "eslint-config-prettier": "^10.1.8",
-        "globals": "^17.12.0",
+        "globals": "^17.13.0",
         "prettier": "3.9.6",
-        "typescript-eslint": "^8.70.0",
-        "web-ext": "^10.6.0"
+        "typescript-eslint": "^8.72.1",
+        "web-ext": "^10.8.0"
     }
 }

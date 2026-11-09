@@ -4,12 +4,17 @@
  */
 
 import { equalsFunction } from './data-queries.ts';
+import { albumChanged } from './edit-changed.ts';
 import { getUserName } from './lastfm-page.ts';
 import { openDatabase } from '../services/database.ts';
 import { log } from '../services/logger.ts';
 import type { EditAlbumFormValues, Scrobble } from '../types/lastfm.ts';
 
 export async function externalEditAlbum(data: EditAlbumFormValues) {
+    if (!albumChanged(data)) {
+        log('externalEditAlbum, data not changed', data);
+        return;
+    }
     const userName = getUserName();
     const db = await openDatabase(userName);
     const equalsFunc = equalsFunction(data.album_name_original);
@@ -31,5 +36,5 @@ export async function externalEditAlbum(data: EditAlbumFormValues) {
         .catch((error) => {
             throw Error('updateScrobble', error);
         });
-    log(`externalEditScrobble, updated ${count} scrobbles`, data);
+    log(`externalEditAlbum, updated ${count} scrobbles`, data);
 }

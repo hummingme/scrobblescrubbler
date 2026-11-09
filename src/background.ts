@@ -9,7 +9,7 @@ import RequestListener from './services/request-listener.ts';
 import type { Message } from './types/messages.ts';
 
 const tabIds: Set<number> = new Set();
-let loggingEnabled: boolean = true;
+let loggingEnabled = true;
 
 const requestListener: RequestListener = new RequestListener();
 requestListener.listen();
