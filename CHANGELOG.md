@@ -1,7 +1,7 @@
 # v1.2.0
 Released on 2025/11/09
-- Rescanning of the automatic track edits has been added when the URL parameter ￼￼rescan=edits￼￼ is used.
-- Bugfix: Rescan of scrobbles for time periods ￼￼month￼￼ and ￼￼year￼￼ is working again.
+- Rescanning of the automatic track edits has been added when the URL parameter `rescan=edits` is used.
+- Bugfix: Rescan of scrobbles for time periods `month` and `year` is working again.
 - When rescanning scrobbles, the scrobbles for the selected period are now deleted from the database beforehand.
 - Bugfix: When an external scrobble edit or album edit is captured, don't update the database if only casings were changed, beause the change will also be rejected by Last.fm.
 - The MissingIcon is now displayed  for affected scrobbles on library track pages.
