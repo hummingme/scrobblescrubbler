@@ -1,5 +1,9 @@
+# v1.2.1
+Released on 2026/11/24
+- The Last.fm Pro detection has been updated due to changes in the HTML code of the Last.fm page.
+
 # v1.2.0
-Released on 2025/11/09
+Released on 2026/11/09
 - Rescanning of the automatic track edits has been added when the URL parameter `rescan=edits` is used.
 - Bugfix: Rescan of scrobbles for time periods `month` and `year` is working again.
 - When rescanning scrobbles, the scrobbles for the selected period are now deleted from the database beforehand.
